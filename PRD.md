@@ -24,7 +24,7 @@ MCP server for **VCV Rack 2** built around **patch authorship**: `.vcv` patch fi
 
 - **No OSC transport implementation** — delegate to osc-mcp. A thin op emits address maps; it never opens sockets.
 - **No GUI automation** of the Rack window. Ever.
-- **No audio rendering in v0.x** — render lane (Rack Pro VST or Cardinal in Reaper) is gated on Sandra's Cardinal-vs-Rack-Pro decision. Design nothing that blocks it; build nothing for it.
+- **No audio rendering in v0.x** — but the decision ladder is settled (2026-07-12): (1) **VCV Recorder module** (free, official) embedded in generated patches — render = open patch, play, collect WAV; works in Free edition with full Library catalog, zero constraints; add a `record_enabled` option to patch generation when the render feature is scheduled. (2) **Cardinal** (FOSS plugin wrapper around Rack code) only if Rack-inside-Reaper becomes a proven want — CAVEAT: Cardinal loads no external modules and has no VCV Library connection (Core modules replaced by its own equivalents), so this path constrains the catalog to the Rack∩Cardinal intersection. (3) **Rack Pro** ($149 one-time) only if Reaper hosting should keep full Library access. Design nothing that blocks any rung; build none of them in v0.x.
 - **No DSP** — this server arranges modules; the modules make the sound.
 
 ## 4. Users & the fifty-fifty catalog mandate
