@@ -38,6 +38,7 @@ PRD.md is the contract; mcp-central-docs section 0 rules apply (no stubs, real t
 ## Phase 3 — vcv_catalog + vcv_live + OSC e2e (0.5 d)
 
 - [ ] `vcv_catalog`: search (tag/persona/text), get_module, verify_installed, suggest_rack (rule-based), library_link (Library page URL per module), sideload (.vcvplugin from GitHub releases — Rack version check, explicit confirm, provenance to SQLite; NO fake "installing from Library" — no such API exists)
+- [ ] `vcv_patch.rack_cycle` — restart choreography per PRD §6.1: process detect, user confirm, WM_CLOSE graceful close (timeout → second confirm before hard kill), stage sideloads, relaunch, plugins-dir before/after diff. NO GUI automation — process lifecycle only. Test with a mock Rack process (notepad.exe stand-in) for the close/relaunch logic; real-Rack verification joins MANUAL GATE P3
 - [ ] `vcv_live.address_map` — emit map in the format osc-mcp `vcv_manager` consumes (read osc-mcp source for the exact contract; do NOT guess)
 - [ ] `vcv_live.performance_sheet` — markdown from sidecar + map
 - [ ] MANUAL GATE P3: performance-persona patch playing in Rack; sweep filter cutoff via osc-mcp using only the emitted address_map (PRD §10.3)

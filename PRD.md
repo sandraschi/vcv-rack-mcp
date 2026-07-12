@@ -61,6 +61,7 @@ Catalog v1 target: **44–50 modules, free VCV Library modules only (POLICY, 202
 | `validate` | patch_id or path | report | 3 checks: slugs in catalog, slugs in installed plugins dir, cable endpoints are real ports w/ correct in/out polarity |
 | `list` / `get` | filters / patch_id | metadata / full JSON+sidecar | |
 | `open_in_rack` | patch_id | pid | Launch Rack with the patch; refuse if Rack already running with unsaved-state risk (check process first). Rack path from config `RACK_EXE`, default `C:\Program Files\VCV\Rack2Free\Rack.exe` (Goliath, confirmed 2026-07-12); onboarding for other machines in `docs/ONBOARDING.md` |
+| `rack_cycle` | reason, pending_sideload? | report | Restart choreography — the module-install enabler. Rack loads plugins ONLY at startup (no runtime loading exists; GUI automation cannot change this and is banned anyway). Flow: detect running Rack → confirm with user → graceful close via WM_CLOSE (Rack autosaves; wait for clean exit, hard-kill only after timeout + second confirm) → place pending .vcvplugin(s) → relaunch (startup Library sync also fetches pending subscriptions — login token persists) → verify via plugins-dir scan → report before/after diff |
 | `import` | path | patch_id | Ingest an externally saved .vcv (recon fuel) |
 
 ### 6.2 `vcv_catalog` (portmanteau)
@@ -101,6 +102,7 @@ SEP-1577 `ctx.sample` loop: brief → catalog selection → JSON generation → 
 | Module JSON footprints vary (some store extra state blobs) | Catalog entries include an `observed_json` snippet captured during recon; generator copies structure from observation, never invents fields |
 | OSC bridge module choice wrong | Recon task tests BOTH candidate bridge modules with osc-mcp before catalog freeze |
 | Rack running while patch written → autosave clobber | `open_in_rack` checks for running Rack process; document the workflow (Rack closed during generation OR open patch as new tab) |
+| `rack_cycle` closes Rack mid-performance | ALWAYS requires explicit user confirmation before closing; never auto-cycles as a side effect of sideload — sideload stages the file and OFFERS the cycle |
 | Catalog drift vs installed plugins | `verify_installed` op + CI-adjacent check in justfile |
 
 ## 9. Milestones (AI-assisted, realistic)
