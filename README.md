@@ -6,7 +6,9 @@ MCP server for VCV Rack 2 built on one insight: **`.vcv` patch files are plain J
 
 - **PRD.md** — the contract: goals, tool specs, patch conventions, risks, acceptance gate
 - **TODO.md** — ordered build phases with gates (recon → catalog → patch engine → OSC e2e → agentic → ship)
-- Catalog mandate: 44–50 curated modules, **fifty-fifty** generative-ambient / DJ-performance
-- Render lane (Rack Pro / Cardinal): deferred pending owner decision
+- **docs/ONBOARDING.md** — fresh-machine setup (Rack 2 Free, VCV account, Library, audio check)
+- Catalog mandate: 44–50 curated modules, **fifty-fifty** generative-ambient / DJ-performance; **free Library modules only** in v1
+- Module management: webapp Modules page (installed diff / Library deep-links / GitHub sideload) + `rack_cycle` restart choreography — Rack loads plugins only at startup, so install-into-running-Rack = graceful close → stage → relaunch → verify. No GUI automation, by design.
+- Render: ladder settled — free VCV Recorder module in patches → Cardinal (catalog-intersection caveat) → Rack Pro, each rung only on proven need
 
 Part of the sandraschi MCP fleet. Fleet context: `mcp-central-docs\architecture\FLEET_GAP_ANALYSIS_2026-07.md` §12.2.
