@@ -1,21 +1,10 @@
-# fileops edit sidecars
-*.bak
-*.md.bak
-
-# Python
-__pycache__/
-*.py[cod]
 .venv/
-dist/
-build/
-*.egg-info/
-
-# JS
+__pycache__/
+*.pyc
 node_modules/
-web_sota/dist/
-
-# Local state
-*.sqlite
-*.db
-recon/agentic_runs/
 .env
+dist/
+depot/*.sqlite
+depot/*.sqlite-wal
+depot/*.sqlite-shm
+*.bak

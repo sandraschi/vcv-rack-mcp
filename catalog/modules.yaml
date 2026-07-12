@@ -1,0 +1,2663 @@
+# vcv-rack-mcp module catalog
+# Catalog v1: 49 modules, free VCV Library only
+# See PRD.md §4 for persona-split mandate (50/50 generative vs performance)
+#
+# NOTE: For community modules without a saved-patch JSON reference, param IDs,
+# ranges, and port lists are ESTIMATED from front-panel observation.
+# observed_json is null for those entries. Replace with real values during
+# Phase 1 recon (see TODO.md).
+
+# =============================================================================
+# FUNDAMENTAL (VCV, ships with Rack) — 18 modules
+# =============================================================================
+
+- plugin_slug: "Fundamental"
+  model_slug: "VCO"
+  display_name: "VCO"
+  brand: "VCV"
+  function_tags: ["osc"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "FINE"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "PITCH"
+      min: -3.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "PITCH"
+      type: "input"
+    - id: 1
+      name: "FM"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "SAW"
+      type: "output"
+    - id: 1
+      name: "SIN"
+      type: "output"
+    - id: 2
+      name: "TRI"
+      type: "output"
+    - id: 3
+      name: "PULSE"
+      type: "output"
+    - id: 4
+      name: "PM"
+      type: "output"
+  notes: "Standard analog VCO. PM output is phase-modulated by the FM input."
+
+- plugin_slug: "Fundamental"
+  model_slug: "VCO-2"
+  display_name: "VCO-2"
+  brand: "VCV"
+  function_tags: ["osc"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FINE_1"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "PITCH_1"
+      min: -3.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "PWM_1"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "FINE_2"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 4
+      label: "PITCH_2"
+      min: -3.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: true
+    - id: 5
+      label: "PWM_2"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "PITCH_1"
+      type: "input"
+    - id: 1
+      name: "PWM_1"
+      type: "input"
+    - id: 2
+      name: "PITCH_2"
+      type: "input"
+    - id: 3
+      name: "PWM_2"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "SAW_1"
+      type: "output"
+    - id: 1
+      name: "PULSE_1"
+      type: "output"
+    - id: 2
+      name: "SAW_2"
+      type: "output"
+    - id: 3
+      name: "PULSE_2"
+      type: "output"
+  notes: "Dual sawtooth oscillator with PWM on each channel."
+
+- plugin_slug: "Fundamental"
+  model_slug: "LFO"
+  display_name: "LFO"
+  brand: "VCV"
+  function_tags: ["env", "osc"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: -8.0
+      max: 8.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "RESET"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "SAW"
+      type: "output"
+    - id: 1
+      name: "SIN"
+      type: "output"
+    - id: 2
+      name: "TRI"
+      type: "output"
+    - id: 3
+      name: "PULSE"
+      type: "output"
+    - id: 4
+      name: "PM"
+      type: "output"
+  notes: "Low-frequency oscillator with multiple waveform outputs."
+
+- plugin_slug: "Fundamental"
+  model_slug: "LFO-2"
+  display_name: "LFO-2"
+  brand: "VCV"
+  function_tags: ["env", "osc", "noise"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: -8.0
+      max: 8.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "SLEW"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "MODE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "TRIG"
+      type: "input"
+    - id: 1
+      name: "SLEW"
+      type: "input"
+    - id: 2
+      name: "MODE"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "SIN"
+      type: "output"
+    - id: 1
+      name: "TRI"
+      type: "output"
+    - id: 2
+      name: "SAW"
+      type: "output"
+    - id: 3
+      name: "PULSE"
+      type: "output"
+    - id: 4
+      name: "S&H"
+      type: "output"
+  notes: "LFO with sample-and-hold output, slew limiter, and mode switching (free/loop/once)."
+
+- plugin_slug: "Fundamental"
+  model_slug: "VCF"
+  display_name: "VCF"
+  brand: "VCV"
+  function_tags: ["filter"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "RES"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "FREQ"
+      type: "input"
+    - id: 1
+      name: "RES"
+      type: "input"
+    - id: 2
+      name: "IN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "LP"
+      type: "output"
+    - id: 1
+      name: "HP"
+      type: "output"
+    - id: 2
+      name: "BP"
+      type: "output"
+  notes: "State-variable filter with lowpass, highpass, and bandpass outputs."
+
+- plugin_slug: "Fundamental"
+  model_slug: "VCA"
+  display_name: "VCA"
+  brand: "VCV"
+  function_tags: ["mixer"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "LEVEL"
+      min: 0.0
+      max: 1.0
+      default: 1.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "CV"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Single voltage-controlled amplifier."
+
+- plugin_slug: "Fundamental"
+  model_slug: "ADSR"
+  display_name: "ADSR"
+  brand: "VCV"
+  function_tags: ["env"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "ATTACK"
+      min: 0.0
+      max: 1.0
+      default: 0.1
+      osc_suitable: true
+    - id: 1
+      label: "DECAY"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 2
+      label: "SUSTAIN"
+      min: 0.0
+      max: 1.0
+      default: 0.7
+      osc_suitable: true
+    - id: 3
+      label: "RELEASE"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "GATE"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "ENV"
+      type: "output"
+    - id: 1
+      name: "INV"
+      type: "output"
+  notes: "Four-stage envelope generator with inverted output."
+
+- plugin_slug: "Fundamental"
+  model_slug: "SEQ-3"
+  display_name: "SEQ-3"
+  brand: "VCV"
+  function_tags: ["seq"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "RUN"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "RESET"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 2
+      label: "STEPS"
+      min: 1.0
+      max: 8.0
+      default: 8.0
+      osc_suitable: false
+    - id: 3
+      label: "CHANNEL_1"
+      min: 0.0
+      max: 10.0
+      default: 0.0
+      osc_suitable: true
+    - id: 4
+      label: "CHANNEL_2"
+      min: 0.0
+      max: 10.0
+      default: 0.0
+      osc_suitable: true
+    - id: 5
+      label: "CHANNEL_3"
+      min: 0.0
+      max: 10.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CLOCK"
+      type: "input"
+    - id: 1
+      name: "RESET"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "CV_1"
+      type: "output"
+    - id: 1
+      name: "CV_2"
+      type: "output"
+    - id: 2
+      name: "CV_3"
+      type: "output"
+    - id: 3
+      name: "GATE"
+      type: "output"
+  notes: "Three-channel CV sequencer with 8 steps per channel."
+
+- plugin_slug: "Fundamental"
+  model_slug: "RANDOM"
+  display_name: "RANDOM"
+  brand: "VCV"
+  function_tags: ["noise", "util"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "SLEW"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "TRIG"
+      type: "input"
+    - id: 1
+      name: "SLEW"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "GATE"
+      type: "output"
+    - id: 1
+      name: "S&H"
+      type: "output"
+    - id: 2
+      name: "NOISE"
+      type: "output"
+    - id: 3
+      name: "UNIF"
+      type: "output"
+    - id: 4
+      name: "BIZARRE"
+      type: "output"
+  notes: "Noise source and sample-and-hold with multiple random outputs."
+
+- plugin_slug: "Fundamental"
+  model_slug: "MIXER"
+  display_name: "MIXER"
+  brand: "VCV"
+  function_tags: ["mixer"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "CH_1"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "CH_2"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "CH_3"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "CH_4"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CH_1"
+      type: "input"
+    - id: 1
+      name: "CH_2"
+      type: "input"
+    - id: 2
+      name: "CH_3"
+      type: "input"
+    - id: 3
+      name: "CH_4"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Four-channel unity-gain mixer."
+
+- plugin_slug: "Fundamental"
+  model_slug: "AUDIO-8"
+  display_name: "AUDIO-8"
+  brand: "VCV"
+  function_tags: ["io"]
+  persona_tags: ["both"]
+  params: []
+  inputs:
+    - id: 0
+      name: "L_1"
+      type: "input"
+    - id: 1
+      name: "R_1"
+      type: "input"
+    - id: 2
+      name: "L_2"
+      type: "input"
+    - id: 3
+      name: "R_2"
+      type: "input"
+    - id: 4
+      name: "L_3"
+      type: "input"
+    - id: 5
+      name: "R_3"
+      type: "input"
+    - id: 6
+      name: "L_4"
+      type: "input"
+    - id: 7
+      name: "R_4"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "L_1"
+      type: "output"
+    - id: 1
+      name: "R_1"
+      type: "output"
+    - id: 2
+      name: "L_2"
+      type: "output"
+    - id: 3
+      name: "R_2"
+      type: "output"
+    - id: 4
+      name: "L_3"
+      type: "output"
+    - id: 5
+      name: "R_3"
+      type: "output"
+    - id: 6
+      name: "L_4"
+      type: "output"
+    - id: 7
+      name: "R_4"
+      type: "output"
+  notes: "8-channel audio interface (4 stereo pairs). Always include in every generated patch."
+
+- plugin_slug: "Fundamental"
+  model_slug: "SCOPE"
+  display_name: "SCOPE"
+  brand: "VCV"
+  function_tags: ["visual"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "ZOOM"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: false
+    - id: 1
+      label: "TRIG"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 2
+      label: "DISPLAY"
+      min: 0.0
+      max: 2.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "X"
+      type: "input"
+    - id: 1
+      name: "Y"
+      type: "input"
+    - id: 2
+      name: "TRIG"
+      type: "input"
+  outputs: []
+  notes: "Dual-trace oscilloscope / X-Y display."
+
+- plugin_slug: "Fundamental"
+  model_slug: "DELAY"
+  display_name: "DELAY"
+  brand: "VCV"
+  function_tags: ["fx"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "TIME"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 1
+      label: "FEEDBACK"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "TIME"
+      type: "input"
+    - id: 1
+      name: "FEEDBACK"
+      type: "input"
+    - id: 2
+      name: "IN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "DEL"
+      type: "output"
+    - id: 1
+      name: "MIX"
+      type: "output"
+  notes: "Simple digital delay with time and feedback controls."
+
+- plugin_slug: "Fundamental"
+  model_slug: "SPRING_REVERB"
+  display_name: "SPRING REVERB"
+  brand: "VCV"
+  function_tags: ["fx"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "TONE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "WET"
+      type: "output"
+    - id: 1
+      name: "DRY"
+      type: "output"
+  notes: "Spring reverb emulation."
+
+- plugin_slug: "Fundamental"
+  model_slug: "SPLIT"
+  display_name: "SPLIT"
+  brand: "VCV"
+  function_tags: ["util"]
+  persona_tags: ["performance"]
+  params: []
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT_1"
+      type: "output"
+    - id: 1
+      name: "OUT_2"
+      type: "output"
+    - id: 2
+      name: "OUT_3"
+      type: "output"
+    - id: 3
+      name: "OUT_4"
+      type: "output"
+  notes: "Passive multiples"
+
+- plugin_slug: "Fundamental"
+  model_slug: "MERGE"
+  display_name: "MERGE"
+  brand: "VCV"
+  function_tags: ["util"]
+  persona_tags: ["performance"]
+  params: []
+  inputs:
+    - id: 0
+      name: "IN_1"
+      type: "input"
+    - id: 1
+      name: "IN_2"
+      type: "input"
+    - id: 2
+      name: "IN_3"
+      type: "input"
+    - id: 3
+      name: "IN_4"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "4-to-1 signal merger."
+
+- plugin_slug: "Fundamental"
+  model_slug: "PITCH_QUANTIZER"
+  display_name: "PITCH QUANTIZER"
+  brand: "VCV"
+  function_tags: ["quant", "util"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "NOTE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "ROOT"
+      min: 0.0
+      max: 11.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "NOTE"
+      type: "input"
+    - id: 2
+      name: "ROOT"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Quantizes a 1V/oct CV to discrete chromatic pitches. NOTE param selects scale degree sets."
+
+- plugin_slug: "Fundamental"
+  model_slug: "PULSE_PROCESSOR"
+  display_name: "PULSE PROCESSOR"
+  brand: "VCV"
+  function_tags: ["util"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "DELAY"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "DURATION"
+      min: 0.0
+      max: 1.0
+      default: 0.1
+      osc_suitable: false
+    - id: 2
+      label: "MODE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "DELAY"
+      type: "input"
+    - id: 2
+      name: "DURATION"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Pulse delay and duration processor with retrigger mode."
+
+# =============================================================================
+# AUDIBLE INSTRUMENTS (Mutable Instruments ports) — 8 modules
+# =============================================================================
+
+- plugin_slug: "AudibleInstruments"
+  model_slug: "MacroOscillator"
+  display_name: "Macro Oscillator"
+  brand: "Audible Instruments"
+  function_tags: ["osc", "physical"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "MODEL"
+      min: 0.0
+      max: 6.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "PITCH"
+      min: -3.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "FINE"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 3
+      label: "HARMONICS"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 4
+      label: "TIMBRE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 5
+      label: "MORPH"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 6
+      label: "LEVEL"
+      min: 0.0
+      max: 1.0
+      default: 0.8
+      osc_suitable: true
+    - id: 7
+      label: "LPG_DECAY"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "PITCH"
+      type: "input"
+    - id: 1
+      name: "HARMONICS"
+      type: "input"
+    - id: 2
+      name: "TIMBRE"
+      type: "input"
+    - id: 3
+      name: "MORPH"
+      type: "input"
+    - id: 4
+      name: "TRIG"
+      type: "input"
+    - id: 5
+      name: "LEVEL"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+    - id: 1
+      name: "AUX"
+      type: "output"
+    - id: 2
+      name: "EOC"
+      type: "output"
+  notes: "Mutable Instruments Plaits port. Model switch selects oscillator model (7 modes). LPG_DECAY internal VCA envelope."
+
+- plugin_slug: "AudibleInstruments"
+  model_slug: "Resonator"
+  display_name: "Resonator"
+  brand: "Audible Instruments"
+  function_tags: ["fx", "physical"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "STRUCTURE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "BRIGHTNESS"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "DAMPING"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 4
+      label: "POSITION"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 5
+      label: "GAIN"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "FREQ"
+      type: "input"
+    - id: 2
+      name: "STRUCTURE"
+      type: "input"
+    - id: 3
+      name: "BRIGHTNESS"
+      type: "input"
+    - id: 4
+      name: "DAMPING"
+      type: "input"
+    - id: 5
+      name: "POSITION"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Mutable Instruments Elements port. Physical modelling resonator (metal/glass/string/ membrane)."
+
+- plugin_slug: "AudibleInstruments"
+  model_slug: "TextureSynthesizer"
+  display_name: "Texture Synthesizer"
+  brand: "Audible Instruments"
+  function_tags: ["fx", "granular"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "POSITION"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "SIZE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "PITCH"
+      min: -2.0
+      max: 2.0
+      default: 0.0
+      osc_suitable: true
+    - id: 3
+      label: "DENSITY"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 4
+      label: "TEXTURE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 5
+      label: "BLEND"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 6
+      label: "SPREAD"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 7
+      label: "FEEDBACK"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 8
+      label: "REVERB"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "POSITION"
+      type: "input"
+    - id: 2
+      name: "SIZE"
+      type: "input"
+    - id: 3
+      name: "PITCH"
+      type: "input"
+    - id: 4
+      name: "DENSITY"
+      type: "input"
+    - id: 5
+      name: "TEXTURE"
+      type: "input"
+    - id: 6
+      name: "BLEND"
+      type: "input"
+    - id: 7
+      name: "SPREAD"
+      type: "input"
+    - id: 8
+      name: "FEEDBACK"
+      type: "input"
+    - id: 9
+      name: "REVERB"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "L"
+      type: "output"
+    - id: 1
+      name: "R"
+      type: "output"
+  notes: "Mutable Instruments Clouds port. Granular texture processor with reverb. Freeze mode via BLEND param."
+
+- plugin_slug: "AudibleInstruments"
+  model_slug: "Tides"
+  display_name: "Tides"
+  brand: "Audible Instruments"
+  function_tags: ["env", "osc"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FREQUENCY"
+      min: -6.0
+      max: 6.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "SHAPE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "SLOPE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "SMOOTHNESS"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 4
+      label: "PULSE_WIDTH"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 5
+      label: "MODE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "TRIG"
+      type: "input"
+    - id: 1
+      name: "FREQ"
+      type: "input"
+    - id: 2
+      name: "SHAPE"
+      type: "input"
+    - id: 3
+      name: "SLOPE"
+      type: "input"
+    - id: 4
+      name: "SMOOTH"
+      type: "input"
+    - id: 5
+      name: "PW"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+    - id: 1
+      name: "GATE"
+      type: "output"
+    - id: 2
+      name: "BI_POLAR"
+      type: "output"
+  notes: "Mutable Instruments Tides port. Multi-mode envelope generator / LFO."
+
+- plugin_slug: "AudibleInstruments"
+  model_slug: "Stages"
+  display_name: "Stages"
+  brand: "Audible Instruments"
+  function_tags: ["env", "seq", "util"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "SEG_1"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "SEG_2"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "SEG_3"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 3
+      label: "SEG_4"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 4
+      label: "SEG_5"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 5
+      label: "SEG_6"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "TRIG_1"
+      type: "input"
+    - id: 1
+      name: "TRIG_2"
+      type: "input"
+    - id: 2
+      name: "TRIG_3"
+      type: "input"
+    - id: 3
+      name: "TRIG_4"
+      type: "input"
+    - id: 4
+      name: "TRIG_5"
+      type: "input"
+    - id: 5
+      name: "TRIG_6"
+      type: "input"
+    - id: 6
+      name: "CV_1"
+      type: "input"
+    - id: 7
+      name: "CV_2"
+      type: "input"
+    - id: 8
+      name: "CV_3"
+      type: "input"
+    - id: 9
+      name: "CV_4"
+      type: "input"
+    - id: 10
+      name: "CV_5"
+      type: "input"
+    - id: 11
+      name: "CV_6"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT_1"
+      type: "output"
+    - id: 1
+      name: "OUT_2"
+      type: "output"
+    - id: 2
+      name: "OUT_3"
+      type: "output"
+    - id: 3
+      name: "OUT_4"
+      type: "output"
+    - id: 4
+      name: "OUT_5"
+      type: "output"
+    - id: 5
+      name: "OUT_6"
+      type: "output"
+  notes: "Mutable Instruments Stages port. 6 multi-function segments — envelope, LFO, sequencer, or S&H per segment."
+
+- plugin_slug: "AudibleInstruments"
+  model_slug: "Rings"
+  display_name: "Rings"
+  brand: "Audible Instruments"
+  function_tags: ["physical", "osc"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FREQUENCY"
+      min: -3.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "STRUCTURE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "BRIGHTNESS"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "DAMPING"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 4
+      label: "POSITION"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 5
+      label: "POLYPHONY"
+      min: 0.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: false
+    - id: 6
+      label: "INTERNAL_EXCITER"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "FREQ"
+      type: "input"
+    - id: 2
+      name: "STRUCTURE"
+      type: "input"
+    - id: 3
+      name: "BRIGHT"
+      type: "input"
+    - id: 4
+      name: "DAMPING"
+      type: "input"
+    - id: 5
+      name: "POSITION"
+      type: "input"
+    - id: 6
+      name: "STRUM"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+    - id: 1
+      name: "ODD"
+      type: "output"
+    - id: 2
+      name: "EVEN"
+      type: "output"
+  notes: "Mutable Instruments Rings port. Physical modelling resonator — string, bell, or drum."
+
+- plugin_slug: "AudibleInstruments"
+  model_slug: "Warps"
+  display_name: "Warps"
+  brand: "Audible Instruments"
+  function_tags: ["fx", "osc"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "ALGORITHM"
+      min: 0.0
+      max: 7.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "LEVEL_1"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "LEVEL_2"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "INTERNAL"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "IN_1"
+      type: "input"
+    - id: 1
+      name: "IN_2"
+      type: "input"
+    - id: 2
+      name: "ALGORITHM"
+      type: "input"
+    - id: 3
+      name: "LEVEL_1"
+      type: "input"
+    - id: 4
+      name: "LEVEL_2"
+      type: "input"
+    - id: 5
+      name: "INTERNAL"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+    - id: 1
+      name: "AUX"
+      type: "output"
+  notes: "Mutable Instruments Warps port. Wavefolder / crossfader / ring mod / vocoder."
+
+- plugin_slug: "AudibleInstruments"
+  model_slug: "Streams"
+  display_name: "Streams"
+  brand: "Audible Instruments"
+  function_tags: ["env", "mixer"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "MODE"
+      min: 0.0
+      max: 2.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "LEVEL"
+      min: 0.0
+      max: 1.0
+      default: 0.8
+      osc_suitable: true
+    - id: 2
+      label: "PAN"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 3
+      label: "ATTACK"
+      min: 0.0
+      max: 1.0
+      default: 0.1
+      osc_suitable: true
+    - id: 4
+      label: "RELEASE"
+      min: 0.0
+      max: 1.0
+      default: 0.2
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "IN_L"
+      type: "input"
+    - id: 1
+      name: "IN_R"
+      type: "input"
+    - id: 2
+      name: "CV_LEVEL"
+      type: "input"
+    - id: 3
+      name: "CV_PAN"
+      type: "input"
+    - id: 4
+      name: "GATE"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT_L"
+      type: "output"
+    - id: 1
+      name: "OUT_R"
+      type: "output"
+    - id: 2
+      name: "ENV"
+      type: "output"
+  notes: "Mutable Instruments Streams port. Dual dynamics processor — compressor, VCA, or panner per channel."
+
+# =============================================================================
+# IMPROMPTU MODULAR — 5 modules
+# =============================================================================
+
+- plugin_slug: "ImpromptuModular"
+  model_slug: "Clocked"
+  display_name: "Clocked"
+  brand: "Impromptu Modular"
+  function_tags: ["seq"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "BPM"
+      min: 20.0
+      max: 300.0
+      default: 120.0
+      osc_suitable: true
+    - id: 1
+      label: "SWING"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "RESET"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 3
+      label: "RUN"
+      min: 0.0
+      max: 1.0
+      default: 1.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "RESET"
+      type: "input"
+    - id: 1
+      name: "CLOCK"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT_1X"
+      type: "output"
+    - id: 1
+      name: "OUT_2X"
+      type: "output"
+    - id: 2
+      name: "OUT_4X"
+      type: "output"
+    - id: 3
+      name: "OUT_DIV2"
+      type: "output"
+    - id: 4
+      name: "OUT_DIV4"
+      type: "output"
+    - id: 5
+      name: "RESET_OUT"
+      type: "output"
+  notes: "Master clock source with swing and multiple clock divisions."
+
+- plugin_slug: "ImpromptuModular"
+  model_slug: "BigButton"
+  display_name: "BigButton"
+  brand: "Impromptu Modular"
+  function_tags: ["util"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "MODE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "DURATION"
+      min: 0.0
+      max: 1.0
+      default: 0.1
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+    - id: 1
+      name: "GATE"
+      type: "output"
+  notes: "Momentary trigger source. Manual trigger button + trigger input combiner."
+
+- plugin_slug: "ImpromptuModular"
+  model_slug: "FourLine"
+  display_name: "FourLine"
+  brand: "Impromptu Modular"
+  function_tags: ["mixer"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "CH_1"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "CH_2"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "CH_3"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "CH_4"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CH_1"
+      type: "input"
+    - id: 1
+      name: "CH_2"
+      type: "input"
+    - id: 2
+      name: "CH_3"
+      type: "input"
+    - id: 3
+      name: "CH_4"
+      type: "input"
+    - id: 4
+      name: "CV_CH_1"
+      type: "input"
+    - id: 5
+      name: "CV_CH_2"
+      type: "input"
+    - id: 6
+      name: "CV_CH_3"
+      type: "input"
+    - id: 7
+      name: "CV_CH_4"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "4-channel CV-controllable audio mixer."
+
+- plugin_slug: "ImpromptuModular"
+  model_slug: "PhraseSeq16"
+  display_name: "PhraseSeq16"
+  brand: "Impromptu Modular"
+  function_tags: ["seq"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "RUN"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "STEPS"
+      min: 1.0
+      max: 16.0
+      default: 16.0
+      osc_suitable: false
+    - id: 2
+      label: "GATE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: false
+    - id: 3
+      label: "CV"
+      min: 0.0
+      max: 10.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CLOCK"
+      type: "input"
+    - id: 1
+      name: "RESET"
+      type: "input"
+    - id: 2
+      name: "RUN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "CV"
+      type: "output"
+    - id: 1
+      name: "GATE"
+      type: "output"
+    - id: 2
+      name: "EOC"
+      type: "output"
+  notes: "16-step CV/gate sequencer with multiple patterns and phrase modes."
+
+- plugin_slug: "ImpromptuModular"
+  model_slug: "TwelveKey"
+  display_name: "TwelveKey"
+  brand: "Impromptu Modular"
+  function_tags: ["quant", "util"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "ROOT"
+      min: 0.0
+      max: 11.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "SCALE"
+      min: 0.0
+      max: 6.0
+      default: 0.0
+      osc_suitable: false
+    - id: 2
+      label: "NOTE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "ROOT"
+      type: "input"
+    - id: 2
+      name: "SCALE"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+    - id: 1
+      name: "GATE"
+      type: "output"
+  notes: "Quantizer keyboard with scale selection and gate output."
+
+# =============================================================================
+# BOGAUDIO — 6 modules
+# =============================================================================
+
+- plugin_slug: "Bogaudio"
+  model_slug: "BogaudioVCO"
+  display_name: "VCO"
+  brand: "Bogaudio"
+  function_tags: ["osc"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "FINE"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "PITCH"
+      min: -3.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "PULSE_WIDTH"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "FM_INDEX"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "PITCH"
+      type: "input"
+    - id: 1
+      name: "FM"
+      type: "input"
+    - id: 2
+      name: "PWM"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "SAW"
+      type: "output"
+    - id: 1
+      name: "SIN"
+      type: "output"
+    - id: 2
+      name: "TRI"
+      type: "output"
+    - id: 3
+      name: "PULSE"
+      type: "output"
+    - id: 4
+      name: "NOISE"
+      type: "output"
+  notes: "Bogaudio VCO with FM index control. observed_json: null — parameter IDs need verification from saved patch."
+
+- plugin_slug: "Bogaudio"
+  model_slug: "BogaudioVCF"
+  display_name: "VCF"
+  brand: "Bogaudio"
+  function_tags: ["filter"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "RES"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "MODE"
+      min: 0.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "FREQ"
+      type: "input"
+    - id: 1
+      name: "RES"
+      type: "input"
+    - id: 2
+      name: "IN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "LP"
+      type: "output"
+    - id: 1
+      name: "HP"
+      type: "output"
+    - id: 2
+      name: "BP"
+      type: "output"
+  notes: "Bogaudio multimode filter. observed_json: null — parameter IDs need verification from saved patch."
+
+- plugin_slug: "Bogaudio"
+  model_slug: "BogaudioLFO"
+  display_name: "LFO"
+  brand: "Bogaudio"
+  function_tags: ["env", "osc"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: -8.0
+      max: 8.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "SHAPE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "PHASE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "FREQ"
+      type: "input"
+    - id: 1
+      name: "RESET"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "SAW"
+      type: "output"
+    - id: 1
+      name: "SIN"
+      type: "output"
+    - id: 2
+      name: "TRI"
+      type: "output"
+    - id: 3
+      name: "PULSE"
+      type: "output"
+    - id: 4
+      name: "S&H"
+      type: "output"
+  notes: "Bogaudio LFO with phase offset. observed_json: null — parameter IDs need verification from saved patch."
+
+- plugin_slug: "Bogaudio"
+  model_slug: "BogaudioADSR"
+  display_name: "ADSR"
+  brand: "Bogaudio"
+  function_tags: ["env"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "ATTACK"
+      min: 0.0
+      max: 1.0
+      default: 0.1
+      osc_suitable: true
+    - id: 1
+      label: "DECAY"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 2
+      label: "SUSTAIN"
+      min: 0.0
+      max: 1.0
+      default: 0.7
+      osc_suitable: true
+    - id: 3
+      label: "RELEASE"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 4
+      label: "SHAPE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "GATE"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "ENV"
+      type: "output"
+    - id: 1
+      name: "INV"
+      type: "output"
+  notes: "Bogaudio ADSR with envelope shape control. observed_json: null — parameter IDs need verification from saved patch."
+
+- plugin_slug: "Bogaudio"
+  model_slug: "BogaudioDelay"
+  display_name: "DELAY"
+  brand: "Bogaudio"
+  function_tags: ["fx"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "TIME"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 1
+      label: "FEEDBACK"
+      min: 0.0
+      max: 1.0
+      default: 0.3
+      osc_suitable: true
+    - id: 2
+      label: "MIX"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "LP_CUTOFF"
+      min: 0.0
+      max: 1.0
+      default: 1.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "TIME"
+      type: "input"
+    - id: 2
+      name: "FEEDBACK"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Bogaudio delay with lowpass filter in feedback path. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "Bogaudio"
+  model_slug: "BogaudioMixer"
+  display_name: "MIXER"
+  brand: "Bogaudio"
+  function_tags: ["mixer"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "CH_1"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "CH_2"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "CH_3"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "CH_4"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 4
+      label: "MASTER"
+      min: 0.0
+      max: 1.0
+      default: 0.8
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CH_1"
+      type: "input"
+    - id: 1
+      name: "CH_2"
+      type: "input"
+    - id: 2
+      name: "CH_3"
+      type: "input"
+    - id: 3
+      name: "CH_4"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Bogaudio 4-channel mixer with master level. observed_json: null — parameter IDs need verification."
+
+# =============================================================================
+# VALLEY — 3 modules
+# =============================================================================
+
+- plugin_slug: "Valley"
+  model_slug: "Plateau"
+  display_name: "Plateau"
+  brand: "Valley"
+  function_tags: ["fx"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "DECAY"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "MIX"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "COLOR"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "DIFFUSION"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 4
+      label: "MOD_SPEED"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 5
+      label: "MOD_DEPTH"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 6
+      label: "FREEZE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 7
+      label: "HP_CUTOFF"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN_L"
+      type: "input"
+    - id: 1
+      name: "IN_R"
+      type: "input"
+    - id: 2
+      name: "DECAY"
+      type: "input"
+    - id: 3
+      name: "MIX"
+      type: "input"
+    - id: 4
+      name: "COLOR"
+      type: "input"
+    - id: 5
+      name: "FREEZE"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT_L"
+      type: "output"
+    - id: 1
+      name: "OUT_R"
+      type: "output"
+  notes: "Plateau reverb — modulated plate reverb with freeze. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "Valley"
+  model_slug: "Topograph"
+  display_name: "Topograph"
+  brand: "Valley"
+  function_tags: ["visual", "filter"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "ZOOM"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: false
+    - id: 1
+      label: "SPEED"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: false
+    - id: 2
+      label: "RANGE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN_L"
+      type: "input"
+    - id: 1
+      name: "IN_R"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT_L"
+      type: "output"
+    - id: 1
+      name: "OUT_R"
+      type: "output"
+  notes: "Spectrum equaliser / visualiser. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "Valley"
+  model_slug: "Dexter"
+  display_name: "Dexter"
+  brand: "Valley"
+  function_tags: ["filter", "osc"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "RES"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "FOLD"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 3
+      label: "VCA"
+      min: 0.0
+      max: 1.0
+      default: 0.8
+      osc_suitable: true
+    - id: 4
+      label: "MODE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "FREQ"
+      type: "input"
+    - id: 2
+      name: "RES"
+      type: "input"
+    - id: 3
+      name: "FOLD"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Multi-mode filter / oscillator with wavefolding. observed_json: null — parameter IDs need verification."
+
+# =============================================================================
+# OTHER COMMUNITY — 8 modules
+# =============================================================================
+
+- plugin_slug: "MindMeld"
+  model_slug: "MixMaster"
+  display_name: "MixMaster"
+  brand: "MindMeld"
+  function_tags: ["mixer"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "CH_1"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "CH_2"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "CH_3"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "CH_4"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 4
+      label: "CH_5"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 5
+      label: "CH_6"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 6
+      label: "MASTER"
+      min: 0.0
+      max: 1.0
+      default: 0.8
+      osc_suitable: true
+    - id: 7
+      label: "FX_SEND"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CH_1"
+      type: "input"
+    - id: 1
+      name: "CH_2"
+      type: "input"
+    - id: 2
+      name: "CH_3"
+      type: "input"
+    - id: 3
+      name: "CH_4"
+      type: "input"
+    - id: 4
+      name: "CH_5"
+      type: "input"
+    - id: 5
+      name: "CH_6"
+      type: "input"
+    - id: 6
+      name: "FX_RETURN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "MAIN_L"
+      type: "output"
+    - id: 1
+      name: "MAIN_R"
+      type: "output"
+    - id: 2
+      name: "FX_SEND"
+      type: "output"
+  notes: "Master mixer — 6 channels with FX send/return. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "Befaco"
+  model_slug: "EvenVCO"
+  display_name: "EvenVCO"
+  brand: "Befaco"
+  function_tags: ["osc"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "FINE"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "PITCH"
+      min: -3.0
+      max: 3.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "PULSE_WIDTH"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "PITCH"
+      type: "input"
+    - id: 1
+      name: "FM"
+      type: "input"
+    - id: 2
+      name: "PWM"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "SAW"
+      type: "output"
+    - id: 1
+      name: "SIN"
+      type: "output"
+    - id: 2
+      name: "TRI"
+      type: "output"
+    - id: 3
+      name: "PULSE"
+      type: "output"
+    - id: 4
+      name: "SUB"
+      type: "output"
+  notes: "Befaco EvenVCO — analog VCO with sub-octave output. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "Befaco"
+  model_slug: "Rampage"
+  display_name: "Rampage"
+  brand: "Befaco"
+  function_tags: ["env", "util"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "RISE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "FALL"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "SHAPE"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 3
+      label: "MODE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "TRIG"
+      type: "input"
+    - id: 1
+      name: "RISE_CV"
+      type: "input"
+    - id: 2
+      name: "FALL_CV"
+      type: "input"
+    - id: 3
+      name: "SHAPE_CV"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "RISE"
+      type: "output"
+    - id: 1
+      name: "FALL"
+      type: "output"
+    - id: 2
+      name: "EOR"
+      type: "output"
+    - id: 3
+      name: "EOF"
+      type: "output"
+  notes: "Dual slew limiter / envelope generator with end-of-rise and end-of-fall gates. observed_json: null — parameters need verification."
+
+- plugin_slug: "cf"
+  model_slug: "cfLFO"
+  display_name: "cf LFO"
+  brand: "cf"
+  function_tags: ["env", "osc"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: -8.0
+      max: 8.0
+      default: 0.0
+      osc_suitable: true
+    - id: 1
+      label: "SHAPE"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "FREQ"
+      type: "input"
+    - id: 1
+      name: "SHAPE"
+      type: "input"
+    - id: 2
+      name: "RESET"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+    - id: 1
+      name: "INV"
+      type: "output"
+  notes: "cf LFO with morphable waveform. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "cf"
+  model_slug: "cfPulse"
+  display_name: "cf Pulse"
+  brand: "cf"
+  function_tags: ["seq", "util"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "DIVISION"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "PULSE_WIDTH"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CLOCK"
+      type: "input"
+    - id: 1
+      name: "RESET"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Clock divider / pulse generator. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "MLModules"
+  model_slug: "ML_mixer"
+  display_name: "ML Mixer"
+  brand: "ML Modules"
+  function_tags: ["mixer"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "CH_1"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "CH_2"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 2
+      label: "CH_3"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 3
+      label: "CH_4"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 4
+      label: "MASTER"
+      min: 0.0
+      max: 1.0
+      default: 0.8
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CH_1"
+      type: "input"
+    - id: 1
+      name: "CH_2"
+      type: "input"
+    - id: 2
+      name: "CH_3"
+      type: "input"
+    - id: 3
+      name: "CH_4"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "ML Modules utility mixer. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "NYSTHI"
+  model_slug: "Looper"
+  display_name: "Looper"
+  brand: "NYSTHI"
+  function_tags: ["fx", "granular"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "RECORD"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "PLAY"
+      min: 0.0
+      max: 1.0
+      default: 1.0
+      osc_suitable: false
+    - id: 2
+      label: "SPEED"
+      min: -2.0
+      max: 2.0
+      default: 1.0
+      osc_suitable: true
+    - id: 3
+      label: "MIX"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "IN"
+      type: "input"
+    - id: 1
+      name: "TRIG_REC"
+      type: "input"
+    - id: 2
+      name: "TRIG_PLAY"
+      type: "input"
+    - id: 3
+      name: "SPEED"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "NYSTHI looper / sampler. observed_json: null — parameter IDs need verification."
+
+- plugin_slug: "Vult"
+  model_slug: "VultFilter"
+  display_name: "Vult Filter"
+  brand: "Vult"
+  function_tags: ["filter"]
+  persona_tags: ["generative"]
+  params:
+    - id: 0
+      label: "FREQ"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 1
+      label: "RES"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 2
+      label: "DRIVE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+    - id: 3
+      label: "TYPE"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "FREQ"
+      type: "input"
+    - id: 1
+      name: "RES"
+      type: "input"
+    - id: 2
+      name: "IN"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OUT"
+      type: "output"
+  notes: "Vult filter — analog-modelled filter with drive. observed_json: null — parameter IDs need verification."
+
+# =============================================================================
+# OSC BRIDGE — 1 module
+# =============================================================================
+
+- plugin_slug: "cvOSCcv"
+  model_slug: "cvOSCcv"
+  display_name: "cvOSCcv"
+  brand: "cvOSCcv"
+  function_tags: ["util"]
+  persona_tags: ["performance"]
+  params:
+    - id: 0
+      label: "PORT"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "CHANNEL"
+      min: 0.0
+      max: 7.0
+      default: 0.0
+      osc_suitable: false
+  inputs:
+    - id: 0
+      name: "CV_1"
+      type: "input"
+    - id: 1
+      name: "CV_2"
+      type: "input"
+    - id: 2
+      name: "CV_3"
+      type: "input"
+    - id: 3
+      name: "CV_4"
+      type: "input"
+    - id: 4
+      name: "CV_5"
+      type: "input"
+    - id: 5
+      name: "CV_6"
+      type: "input"
+    - id: 6
+      name: "CV_7"
+      type: "input"
+    - id: 7
+      name: "CV_8"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "OSC_1"
+      type: "output"
+    - id: 1
+      name: "OSC_2"
+      type: "output"
+    - id: 2
+      name: "OSC_3"
+      type: "output"
+    - id: 3
+      name: "OSC_4"
+      type: "output"
+    - id: 4
+      name: "OSC_5"
+      type: "output"
+    - id: 5
+      name: "OSC_6"
+      type: "output"
+    - id: 6
+      name: "OSC_7"
+      type: "output"
+    - id: 7
+      name: "OSC_8"
+      type: "output"
+  notes: "OSC-CV bridge module. Model slug TBD during P0 recon — may use OSCelot or cvOSCcv depending on installed version. Every generated patch includes exactly one OSC bridge module. observed_json: null — full param/port structure requires real VCV Library subscription check."

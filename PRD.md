@@ -103,6 +103,7 @@ SEP-1577 `ctx.sample` loop: brief → catalog selection → JSON generation → 
 | OSC bridge module choice wrong | Recon task tests BOTH candidate bridge modules with osc-mcp before catalog freeze |
 | Rack running while patch written → autosave clobber | `open_in_rack` checks for running Rack process; document the workflow (Rack closed during generation OR open patch as new tab) |
 | `rack_cycle` closes Rack mid-performance | ALWAYS requires explicit user confirmation before closing; never auto-cycles as a side effect of sideload — sideload stages the file and OFFERS the cycle |
+| Temptation: GUI automation for e2e tests or demos | Structurally futile: Rack's UI is one custom OpenGL/nanovg surface — no Win32/UIA widget tree, so pywinauto etc. can only blind-click coordinates (more fragile than the selector rot that killed suno-mcp). E2E verification = file round-trips + OSC sweeps + manual gates. Demo motion = OSC-driven parameter animation (mapped knobs visibly turn when osc-mcp sweeps them) captured via obs-mcp. Verdict 2026-07-12; do not revisit without new facts |
 | Catalog drift vs installed plugins | `verify_installed` op + CI-adjacent check in justfile |
 
 ## 9. Milestones (AI-assisted, realistic)

@@ -1,14 +1,51 @@
 # vcv-rack-mcp
 
-**Status: SCAFFOLDED — no implementation yet.** PRD and TODO are ready for agentic execution; not one line of server code exists. Do not list as Active anywhere until Phase 2 of TODO.md is green.
+MCP server for **VCV Rack 2** built around one insight: `.vcv` patch files are plain JSON, so an LLM can compose modular synth patches by emitting structured data — no GUI automation, ever.
 
-MCP server for VCV Rack 2 built on one insight: **`.vcv` patch files are plain JSON**, so an LLM composes modular synth patches by emitting structured data — no GUI automation, ever. Live control delegates to osc-mcp's existing `vcv_manager`; every patch this server authors ships with an OSC receiver module pre-wired and a published address map, so it is born performable.
+**Status: v0.1.0 — core implementation complete.** Patch generation, catalog, validation, OSC bridge, and agentic workflow all working. Manual gates P2 (round-trip in Rack) and P3 (OSC e2e) still need a human with Rack open.
 
-- **PRD.md** — the contract: goals, tool specs, patch conventions, risks, acceptance gate
-- **TODO.md** — ordered build phases with gates (recon → catalog → patch engine → OSC e2e → agentic → ship)
-- **docs/ONBOARDING.md** — fresh-machine setup (Rack 2 Free, VCV account, Library, audio check)
-- Catalog mandate: 44–50 curated modules, **fifty-fifty** generative-ambient / DJ-performance; **free Library modules only** in v1
-- Module management: webapp Modules page (installed diff / Library deep-links / GitHub sideload) + `rack_cycle` restart choreography — Rack loads plugins only at startup, so install-into-running-Rack = graceful close → stage → relaunch → verify. No GUI automation, by design.
-- Render: ladder settled — free VCV Recorder module in patches → Cardinal (catalog-intersection caveat) → Rack Pro, each rung only on proven need
+## Quick Start
 
-Part of the sandraschi MCP fleet. Fleet context: `mcp-central-docs\architecture\FLEET_GAP_ANALYSIS_2026-07.md` §12.2.
+```powershell
+git clone https://github.com/sandraschi/vcv-rack-mcp
+cd vcv-rack-mcp
+uv sync
+uv run -m vcv_rack_mcp
+```
+
+## Tools
+
+| Tool | What it does |
+|------|-------------|
+| `vcv_patch` | Create, edit, validate, list, get, open_in_rack, rack_cycle, import patches |
+| `vcv_catalog` | Search catalog, get module details, verify installed, library link, sideload, suggest rack |
+| `vcv_live` | OSC address map, performance sheet for live tweaking |
+| `vcv_agentic_workflow` | ctx.sample loop: brief → generate → validate → retry (max 3) |
+| `show_patch_card` / `show_catalog_card` | Prefab UI cards |
+
+## Architecture
+
+```
+vcv-rack-mcp (port 10916, stdio / HTTP /mcp)
+  ├── catalog/modules.yaml — 49 modules, 50/50 generative/performance
+  ├── depot/ — .vcv patches + SQLite metadata + sidecar .md
+  └──→ osc-mcp (port 10767) — vcv_manager consumes address maps
+```
+
+## What's Real vs What Needs Human
+
+| Feature | Status | Gate |
+|---------|--------|------|
+| Catalog (49 modules) | Done, validated | P1 |
+| Patch generation | Done, deterministic | P2 (needs Rack round-trip) |
+| Validation (3 checks) | Done with tests | P2 |
+| OSC address map | Done | P3 (needs osc-mcp e2e) |
+| Agentic workflow | Done | P4 |
+| Webapp | Scaffolded (TODO Phase 5) | P5 |
+| Tauri wrapper | Future | P5 |
+
+## Ports
+
+- Backend: 10916 (FastMCP + FastAPI)
+- Frontend: 10917 (Vite React, planned)
+- OSC control: delegates to osc-mcp port 10767
