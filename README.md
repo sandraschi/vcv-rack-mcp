@@ -2,7 +2,7 @@
 
 MCP server for **VCV Rack 2** built around one insight: `.vcv` patch files are plain JSON, so an LLM can compose modular synth patches by emitting structured data — no GUI automation, ever.
 
-**Status: v0.1.0 — core implementation complete.** Patch generation, catalog, validation, OSC bridge, and agentic workflow all working. Manual gates P2 (round-trip in Rack) and P3 (OSC e2e) still need a human with Rack open.
+**Status: v0.1.0 — Webapp and Core complete.** Patch generation, catalog, validation, OSC bridge, webapp dashboard, Playwright E2E tests, and agentic workflow all working. Manual gates P2 (round-trip in Rack) and P3 (OSC e2e) still need a human with Rack open.
 
 ## Quick Start
 
@@ -41,11 +41,11 @@ vcv-rack-mcp (port 10916, stdio / HTTP /mcp)
 | Validation (3 checks) | Done with tests | P2 |
 | OSC address map | Done | P3 (needs osc-mcp e2e) |
 | Agentic workflow | Done | P4 |
-| Webapp | Scaffolded (TODO Phase 5) | P5 |
+| Webapp | Done, with Playwright E2E tests | P5 |
 | Tauri wrapper | Future | P5 |
 
 ## Ports
 
 - Backend: 10916 (FastMCP + FastAPI)
-- Frontend: 10917 (Vite React, planned)
+- Frontend: 10917 (Vite React, active)
 - OSC control: delegates to osc-mcp port 10767
