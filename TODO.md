@@ -8,7 +8,7 @@ PRD.md is the contract; mcp-central-docs section 0 rules apply (no stubs, real t
 ## Phase 0 — Recon & setup (0.5 d)
 
 - [ ] Read `PRD.md`, `AGENTS.md`, `mcp-central-docs\standards\AGENT_PROTOCOLS.md`, `WEBAPP_SOTA_STANDARDS.md`
-- [ ] Verify VCV Rack 2 installed on Goliath; record exact version in `docs/VCV_JSON_SCHEMA.md` header. If NOT installed: STOP, report to Sandra (free download, her action)
+- [x] Verify VCV Rack 2 installed on Goliath — CONFIRMED 2026-07-12: `C:\Program Files\VCV\Rack2Free\Rack.exe` (Free edition — standalone only, no plugin hosting; see docs/ONBOARDING.md). Record exact version number in `docs/VCV_JSON_SCHEMA.md` header at recon time. On any OTHER machine or fresh setup: follow `docs/ONBOARDING.md` first
 - [ ] Locate Rack user dir + `plugins/` dir; list installed plugins to `recon/installed_plugins.txt`
 - [ ] Manually save 4 reference patches in Rack (ASK Sandra to click, or do it if computer use available): (a) empty, (b) 3-module minimal voice VCO→VCF→AUDIO, (c) 8-module patch with cables + a sequencer, (d) same as (c) resaved after moving one knob
 - [ ] Copy them to `recon/reference_patches/`; diff (c) vs (d); document observed JSON schema (top-level keys, module entry shape, cable entry shape, param storage, id assignment, pos units) in `docs/VCV_JSON_SCHEMA.md`

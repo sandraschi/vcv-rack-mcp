@@ -60,7 +60,7 @@ Catalog v1 target: **44–50 modules.** Anchor on VCV **Fundamental** (ships wit
 | `edit` | patch_id, instruction or json_patch | new version | Version chain, never destructive |
 | `validate` | patch_id or path | report | 3 checks: slugs in catalog, slugs in installed plugins dir, cable endpoints are real ports w/ correct in/out polarity |
 | `list` / `get` | filters / patch_id | metadata / full JSON+sidecar | |
-| `open_in_rack` | patch_id | pid | Launch `Rack.exe <patch>`; refuse if Rack already running with unsaved-state risk (check process first) |
+| `open_in_rack` | patch_id | pid | Launch Rack with the patch; refuse if Rack already running with unsaved-state risk (check process first). Rack path from config `RACK_EXE`, default `C:\Program Files\VCV\Rack2Free\Rack.exe` (Goliath, confirmed 2026-07-12); onboarding for other machines in `docs/ONBOARDING.md` |
 | `import` | path | patch_id | Ingest an externally saved .vcv (recon fuel) |
 
 ### 6.2 `vcv_catalog` (portmanteau)
