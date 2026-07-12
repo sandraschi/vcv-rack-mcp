@@ -1,0 +1,27 @@
+{
+  "manifest_version": "0.2",
+  "name": "vcv-rack-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for VCV Rack 2 — generative patch authorship from natural language",
+  "author": {
+    "name": "Sandra Schipal",
+    "email": "sandra@sandraschi.dev"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sandraschi/vcv-rack-mcp"
+  },
+  "server": {
+    "type": "python",
+    "entry_point": "src/vcv_rack_mcp/server.py",
+    "mcp_config": {
+      "command": "python",
+      "args": ["src/vcv_rack_mcp/server.py"],
+      "env": {
+        "PYTHONPATH": "${__dirname}/src",
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}

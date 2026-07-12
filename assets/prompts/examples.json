@@ -1,0 +1,20 @@
+[
+  {
+    "tool": "vcv_patch",
+    "params": {
+      "operation": "create",
+      "name": "Sub-bass Drone",
+      "persona": "generative",
+      "description": "deep sub-bass drone modulated by a slow LFO"
+    },
+    "description": "Generate a new modular patch with the specified musical properties."
+  },
+  {
+    "tool": "vcv_patch",
+    "params": {
+      "operation": "validate",
+      "patch_id": "sub-bass-drone"
+    },
+    "description": "Validate the generated patch against the module catalog and rules."
+  }
+]

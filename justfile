@@ -24,6 +24,6 @@ bootstrap:
 validate-catalog:
     uv run python scripts/validate_catalog.py
 
-# Build Tauri (future)
-build-native:
-    @echo "Tauri wrapper not yet scaffolded — see TODO.md Phase 5"
+# Run release dry run (mcpb packaging only, skips sidecar and tauri nsis)
+release-dry:
+    pwsh -NoProfile -File scripts/release.ps1 -DryRun -SkipSidecar -SkipNsis
