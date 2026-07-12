@@ -94,12 +94,12 @@ Also note the Rack version (Help menu) in a text file `recon\rack_version.txt`. 
 
 ## Phase 5 — Webapp, packaging, release (1 d)
 
-- [/] web_sota: Vite+Tailwind+Bun; pages: Depot (list+filter by persona), Patch detail (JSON viewer, sidecar, address map, validate button, open-in-Rack button), Catalog (searchable), **Modules** (installed-vs-catalog diff, wishlist, Library deep-links with "completes inside Rack on restart" notice, sideload upload/URL with confirmation dialog), Jobs. FastAPI backend on reserved port
-- [/] Playwright headless smoke (per fleet standard)
-- [/] mcpb: manifest, `bunx @anthropic-ai/mcpb validate` + `pack` (NOT init/publish)
-- [/] `just release-dry` per release-template; CHANGELOG_LATEST.md for v0.1.0
-- [/] Add repo to FLEET_INDEX.md (honest status + port numbers); GitHub repo `sandraschi/vcv-rack-mcp`, push
-- [/] GATE P5 (ship): all PRD §10 acceptance criteria checked off with evidence (paths to test output / screenshots in `docs/ACCEPTANCE_EVIDENCE.md`)
+- [x] web_sota: Vite+Tailwind+Bun; pages: Depot (list+filter by persona), Patch detail (JSON viewer, sidecar, address map, validate button, open-in-Rack button), Catalog (searchable), **Modules** (installed-vs-catalog diff, wishlist, Library deep-links with "completes inside Rack on restart" notice, sideload upload/URL with confirmation dialog), Jobs. FastAPI backend on reserved port
+- [x] Playwright headless smoke (per fleet standard)
+- [x] mcpb: manifest, `bunx @anthropic-ai/mcpb validate` + `pack` (NOT init/publish)
+- [x] `just release-dry` per release-template; CHANGELOG_LATEST.md for v0.1.0
+- [x] Add repo to FLEET_INDEX.md (honest status + port numbers); GitHub repo `sandraschi/vcv-rack-mcp`, push
+- [x] GATE P5 (ship): all PRD §10 acceptance criteria checked off with evidence (paths to test output / screenshots in `docs/ACCEPTANCE_EVIDENCE.md`)
 
 ## Explicitly deferred (do not build)
 
