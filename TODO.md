@@ -37,7 +37,7 @@ PRD.md is the contract; mcp-central-docs section 0 rules apply (no stubs, real t
 
 ## Phase 3 — vcv_catalog + vcv_live + OSC e2e (0.5 d)
 
-- [ ] `vcv_catalog`: search (tag/persona/text), get_module, verify_installed, suggest_rack (rule-based)
+- [ ] `vcv_catalog`: search (tag/persona/text), get_module, verify_installed, suggest_rack (rule-based), library_link (Library page URL per module), sideload (.vcvplugin from GitHub releases — Rack version check, explicit confirm, provenance to SQLite; NO fake "installing from Library" — no such API exists)
 - [ ] `vcv_live.address_map` — emit map in the format osc-mcp `vcv_manager` consumes (read osc-mcp source for the exact contract; do NOT guess)
 - [ ] `vcv_live.performance_sheet` — markdown from sidecar + map
 - [ ] MANUAL GATE P3: performance-persona patch playing in Rack; sweep filter cutoff via osc-mcp using only the emitted address_map (PRD §10.3)
@@ -52,7 +52,7 @@ PRD.md is the contract; mcp-central-docs section 0 rules apply (no stubs, real t
 
 ## Phase 5 — Webapp, packaging, release (1 d)
 
-- [ ] web_sota: Vite+Tailwind+Bun; pages: Depot (list+filter by persona), Patch detail (JSON viewer, sidecar, address map, validate button, open-in-Rack button), Catalog (searchable), Jobs. FastAPI backend on reserved port
+- [ ] web_sota: Vite+Tailwind+Bun; pages: Depot (list+filter by persona), Patch detail (JSON viewer, sidecar, address map, validate button, open-in-Rack button), Catalog (searchable), **Modules** (installed-vs-catalog diff, wishlist, Library deep-links with "completes inside Rack on restart" notice, sideload upload/URL with confirmation dialog), Jobs. FastAPI backend on reserved port
 - [ ] Playwright headless smoke (per fleet standard)
 - [ ] mcpb: manifest, `bunx @anthropic-ai/mcpb validate` + `pack` (NOT init/publish)
 - [ ] `just release-dry` per release-template; CHANGELOG_LATEST.md for v0.1.0

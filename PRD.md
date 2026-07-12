@@ -34,7 +34,7 @@ Two personas drive the module catalog, **split ~50/50 (DECIDED 2026-07-12)**:
 - **Generative/ambient (Sandra):** self-playing patches — clocked randomness, quantizers, physical-modeling voices, granular texture, long reverbs. Success = patch runs unattended and stays musical.
 - **DJ/performance (Dani):** clock-synced, hands-on — mixers, crossfading, performance filters, beat-synced FX/loopers, tempo-locked sequencing. Success = headline params (filter cutoff, FX send, crossfade) are OSC-mapped and sweep cleanly live.
 
-Catalog v1 target: **44–50 modules.** Anchor on VCV **Fundamental** (ships with Rack, always installed) + vetted free community plugins. Candidate sets to VERIFY during recon (slugs from the local plugins dir, not from memory): Audible Instruments (Mutable ports — macro oscillator, resonator, texture synthesizer), Impromptu Modular (Clocked), Bogaudio, Valley (Plateau reverb, Topograph), Vult (filters), MindMeld (MixMaster), NYSTHI (sampler/looper), Befaco, cf, ML Modules, plus the OSC bridge module (cvOSCcv / OSCelot class — pick ONE as the standard and verify its JSON footprint first).
+Catalog v1 target: **44–50 modules, free VCV Library modules only (POLICY, 2026-07-12)** — no paid modules in v1; zero cost, zero per-module licensing questions. Ecosystem note: the VCV Library is the single official marketplace carrying both free/community and commercial plugins; there is NO programmatic install API (subscribe on website → Rack downloads on restart). Open-source plugins can additionally be sideloaded from their GitHub releases (.vcvplugin, Rack-2.x-matched). Anchor on VCV **Fundamental** (ships with Rack, always installed) + vetted free community plugins. Candidate sets to VERIFY during recon (slugs from the local plugins dir, not from memory): Audible Instruments (Mutable ports — macro oscillator, resonator, texture synthesizer), Impromptu Modular (Clocked), Bogaudio, Valley (Plateau reverb, Topograph), Vult (filters), MindMeld (MixMaster), NYSTHI (sampler/looper), Befaco, cf, ML Modules, plus the OSC bridge module (cvOSCcv / OSCelot class — pick ONE as the standard and verify its JSON footprint first).
 
 ## 5. Architecture
 
@@ -49,7 +49,7 @@ Catalog v1 target: **44–50 modules.** Anchor on VCV **Fundamental** (ships wit
 
 - FastMCP `>=3.2,<4`, dual transport (stdio + streamable HTTP `/mcp`), transport.py copied from sdr-mcp.
 - SQLite: patch metadata (id, name, persona tag `generative|performance|hybrid`, module list, created, version chain, validation status).
-- web_sota: Vite+Tailwind+Bun frontend (Depot, Catalog, Patch detail w/ address map, Jobs) + FastAPI backend. Ports: reserve pair in `operations\WEBAPP_PORTS.md` (P0 task).
+- web_sota: Vite+Tailwind+Bun frontend (Depot, Catalog, Patch detail w/ address map, **Modules** — installed-vs-catalog diff, Library deep-links, sideload with confirmation, wishlist — and Jobs) + FastAPI backend. Ports: reserve pair in `operations\WEBAPP_PORTS.md` (P0 task).
 
 ## 6. Tool specifications
 
@@ -69,6 +69,8 @@ Catalog v1 target: **44–50 modules.** Anchor on VCV **Fundamental** (ships wit
 | `search` | Query modules.yaml by function tag (osc, filter, seq, fx, mixer, util, granular, physical) and persona tag |
 | `get_module` | Full entry: plugin slug, model slug, params (id, name, range, default, osc_suitable bool), input/output ports (id, name) |
 | `verify_installed` | Diff catalog vs local `Rack2/plugins` dir; report missing |
+| `library_link` | module → its VCV Library page URL (webapp one-click subscribe; install completes inside Rack on restart — no headless install exists, the tool NEVER claims otherwise) |
+| `sideload` | GitHub release URL of a `.vcvplugin` → version-check vs installed Rack, EXPLICIT confirm, place in plugins dir, record provenance in SQLite. Open-source plugins only; refuse unknown origins |
 | `suggest_rack` | persona + intent → recommended module set (rule-based from tags; the agentic tool refines) |
 
 ### 6.3 `vcv_live` (thin)
