@@ -11,6 +11,7 @@ from .config import settings
 # Catalog loader
 # ---------------------------------------------------------------------------
 
+
 def load_catalog() -> dict[str, dict]:
     """Load the module catalog from ``modules.yaml``.
 
@@ -38,137 +39,519 @@ def _builtin_catalog() -> dict[str, dict]:
     Used as a fallback when ``catalog/modules.yaml`` does not exist yet.
     The full 44–50 entry catalog lives in ``catalog/modules.yaml`` (Phase 1).
     """
-    def _mod(plugin: str, model: str, params, inputs, outputs,
-             tags: list[str] | None = None, display_name: str | None = None):
-        return {model: {
-            "plugin_slug": plugin,
-            "model_slug": model,
-            "display_name": display_name or model,
-            "function_tags": tags or [],
-            "persona_tags": ["generative", "performance"],
-            "params": params,
-            "inputs": inputs,
-            "outputs": outputs,
-        }}
+
+    def _mod(
+        plugin: str,
+        model: str,
+        params,
+        inputs,
+        outputs,
+        tags: list[str] | None = None,
+        display_name: str | None = None,
+    ):
+        return {
+            model: {
+                "plugin_slug": plugin,
+                "model_slug": model,
+                "display_name": display_name or model,
+                "function_tags": tags or [],
+                "persona_tags": ["generative", "performance"],
+                "params": params,
+                "inputs": inputs,
+                "outputs": outputs,
+            }
+        }
 
     fundamental = "Fundamental"
     return {
         fundamental: dict(
-            **_mod(fundamental, "VCO",
+            **_mod(
+                fundamental,
+                "VCO",
                 params=[
-                    {"id": 0, "label": "FREQ", "min": -3, "max": 3, "default": 0, "osc_suitable": True},
-                    {"id": 1, "label": "FINE", "min": -1, "max": 1, "default": 0, "osc_suitable": False},
-                    {"id": 2, "label": "PWM", "min": 0, "max": 1, "default": 0.5, "osc_suitable": False},
-                    {"id": 3, "label": "FM", "min": 0, "max": 1, "default": 0, "osc_suitable": False},
+                    {
+                        "id": 0,
+                        "label": "FREQ",
+                        "min": -3,
+                        "max": 3,
+                        "default": 0,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 1,
+                        "label": "FINE",
+                        "min": -1,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 2,
+                        "label": "PWM",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.5,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 3,
+                        "label": "FM",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
                 ],
-                inputs=[{"id": 0, "name": "PITCH", "type": "input"}, {"id": 1, "name": "FM", "type": "input"}, {"id": 2, "name": "PWM", "type": "input"}],
-                outputs=[{"id": 0, "name": "SIN", "type": "output"}, {"id": 1, "name": "TRI", "type": "output"}, {"id": 2, "name": "SAW", "type": "output"}, {"id": 3, "name": "SQR", "type": "output"}],
-                tags=["osc"]),
-            **_mod(fundamental, "VCO-2",
-                params=[
-                    {"id": 0, "label": "FINE", "min": -1, "max": 1, "default": 0, "osc_suitable": False},
-                    {"id": 1, "label": "SEMI", "min": -12, "max": 12, "default": 0, "osc_suitable": False},
-                    {"id": 2, "label": "PWM", "min": 0, "max": 1, "default": 0.5, "osc_suitable": False},
-                    {"id": 3, "label": "FM", "min": 0, "max": 1, "default": 0, "osc_suitable": False},
+                inputs=[
+                    {"id": 0, "name": "PITCH", "type": "input"},
+                    {"id": 1, "name": "FM", "type": "input"},
+                    {"id": 2, "name": "PWM", "type": "input"},
                 ],
-                inputs=[{"id": 0, "name": "PITCH", "type": "input"}, {"id": 1, "name": "FM", "type": "input"}, {"id": 2, "name": "PWM", "type": "input"}],
-                outputs=[{"id": 0, "name": "SIN", "type": "output"}, {"id": 1, "name": "TRI", "type": "output"}, {"id": 2, "name": "SAW", "type": "output"}, {"id": 3, "name": "SQR", "type": "output"}],
-                tags=["osc"]),
-            **_mod(fundamental, "LFO",
+                outputs=[
+                    {"id": 0, "name": "SIN", "type": "output"},
+                    {"id": 1, "name": "TRI", "type": "output"},
+                    {"id": 2, "name": "SAW", "type": "output"},
+                    {"id": 3, "name": "SQR", "type": "output"},
+                ],
+                tags=["osc"],
+            ),
+            **_mod(
+                fundamental,
+                "VCO-2",
                 params=[
-                    {"id": 0, "label": "FREQ", "min": 0, "max": 1, "default": 0.5, "osc_suitable": True},
-                    {"id": 1, "label": "GAIN", "min": 0, "max": 1, "default": 1, "osc_suitable": False},
-                    {"id": 2, "label": "OFFSET", "min": -1, "max": 1, "default": 0, "osc_suitable": False},
+                    {
+                        "id": 0,
+                        "label": "FINE",
+                        "min": -1,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 1,
+                        "label": "SEMI",
+                        "min": -12,
+                        "max": 12,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 2,
+                        "label": "PWM",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.5,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 3,
+                        "label": "FM",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
+                ],
+                inputs=[
+                    {"id": 0, "name": "PITCH", "type": "input"},
+                    {"id": 1, "name": "FM", "type": "input"},
+                    {"id": 2, "name": "PWM", "type": "input"},
+                ],
+                outputs=[
+                    {"id": 0, "name": "SIN", "type": "output"},
+                    {"id": 1, "name": "TRI", "type": "output"},
+                    {"id": 2, "name": "SAW", "type": "output"},
+                    {"id": 3, "name": "SQR", "type": "output"},
+                ],
+                tags=["osc"],
+            ),
+            **_mod(
+                fundamental,
+                "LFO",
+                params=[
+                    {
+                        "id": 0,
+                        "label": "FREQ",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.5,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 1,
+                        "label": "GAIN",
+                        "min": 0,
+                        "max": 1,
+                        "default": 1,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 2,
+                        "label": "OFFSET",
+                        "min": -1,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
                 ],
                 inputs=[{"id": 0, "name": "RESET", "type": "input"}],
-                outputs=[{"id": 0, "name": "SIN", "type": "output"}, {"id": 1, "name": "TRI", "type": "output"}, {"id": 2, "name": "SAW", "type": "output"}, {"id": 3, "name": "SQR", "type": "output"}, {"id": 4, "name": "STEP", "type": "output"}],
-                tags=["modulation"]),
-            **_mod(fundamental, "VCF",
-                params=[
-                    {"id": 0, "label": "FREQ", "min": 0, "max": 1, "default": 0.5, "osc_suitable": True},
-                    {"id": 1, "label": "RES", "min": 0, "max": 1, "default": 0, "osc_suitable": True},
-                    {"id": 2, "label": "FM", "min": 0, "max": 1, "default": 0, "osc_suitable": False},
+                outputs=[
+                    {"id": 0, "name": "SIN", "type": "output"},
+                    {"id": 1, "name": "TRI", "type": "output"},
+                    {"id": 2, "name": "SAW", "type": "output"},
+                    {"id": 3, "name": "SQR", "type": "output"},
+                    {"id": 4, "name": "STEP", "type": "output"},
                 ],
-                inputs=[{"id": 0, "name": "AUDIO_IN", "type": "input"}, {"id": 1, "name": "FREQ_CV", "type": "input"}, {"id": 2, "name": "RES_CV", "type": "input"}, {"id": 3, "name": "FM", "type": "input"}],
-                outputs=[{"id": 0, "name": "LP", "type": "output"}, {"id": 1, "name": "HP", "type": "output"}, {"id": 2, "name": "BP", "type": "output"}],
-                tags=["filter"]),
-            **_mod(fundamental, "VCA",
-                params=[{"id": 0, "label": "LEVEL", "min": 0, "max": 1, "default": 0.8, "osc_suitable": True}],
-                inputs=[{"id": 0, "name": "AUDIO_IN", "type": "input"}, {"id": 1, "name": "CV", "type": "input"}],
-                outputs=[{"id": 0, "name": "AUDIO_OUT", "type": "output"}],
-                tags=["amp"]),
-            **_mod(fundamental, "ADSR",
+                tags=["modulation"],
+            ),
+            **_mod(
+                fundamental,
+                "VCF",
                 params=[
-                    {"id": 0, "label": "ATTACK", "min": 0, "max": 1, "default": 0.1, "osc_suitable": True},
-                    {"id": 1, "label": "DECAY", "min": 0, "max": 1, "default": 0.3, "osc_suitable": False},
-                    {"id": 2, "label": "SUSTAIN", "min": 0, "max": 1, "default": 0.7, "osc_suitable": False},
-                    {"id": 3, "label": "RELEASE", "min": 0, "max": 1, "default": 0.5, "osc_suitable": True},
+                    {
+                        "id": 0,
+                        "label": "FREQ",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.5,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 1,
+                        "label": "RES",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 2,
+                        "label": "FM",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
+                ],
+                inputs=[
+                    {"id": 0, "name": "AUDIO_IN", "type": "input"},
+                    {"id": 1, "name": "FREQ_CV", "type": "input"},
+                    {"id": 2, "name": "RES_CV", "type": "input"},
+                    {"id": 3, "name": "FM", "type": "input"},
+                ],
+                outputs=[
+                    {"id": 0, "name": "LP", "type": "output"},
+                    {"id": 1, "name": "HP", "type": "output"},
+                    {"id": 2, "name": "BP", "type": "output"},
+                ],
+                tags=["filter"],
+            ),
+            **_mod(
+                fundamental,
+                "VCA",
+                params=[
+                    {
+                        "id": 0,
+                        "label": "LEVEL",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.8,
+                        "osc_suitable": True,
+                    }
+                ],
+                inputs=[
+                    {"id": 0, "name": "AUDIO_IN", "type": "input"},
+                    {"id": 1, "name": "CV", "type": "input"},
+                ],
+                outputs=[{"id": 0, "name": "AUDIO_OUT", "type": "output"}],
+                tags=["amp"],
+            ),
+            **_mod(
+                fundamental,
+                "ADSR",
+                params=[
+                    {
+                        "id": 0,
+                        "label": "ATTACK",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.1,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 1,
+                        "label": "DECAY",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.3,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 2,
+                        "label": "SUSTAIN",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.7,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 3,
+                        "label": "RELEASE",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.5,
+                        "osc_suitable": True,
+                    },
                 ],
                 inputs=[{"id": 0, "name": "GATE", "type": "input"}],
                 outputs=[{"id": 0, "name": "ENVELOPE", "type": "output"}],
-                tags=["envelope"]),
-            **_mod(fundamental, "RANDOM",
-                params=[{"id": 0, "label": "MODE", "min": 0, "max": 1, "default": 0, "osc_suitable": False}],
-                inputs=[{"id": 0, "name": "TRIG", "type": "input"}],
-                outputs=[{"id": 0, "name": "UNI", "type": "output"}, {"id": 1, "name": "BI", "type": "output"}, {"id": 2, "name": "TRIG", "type": "output"}],
-                tags=["random"]),
-            **_mod(fundamental, "SEQ",
-                params=[{"id": 0, "label": "STEP", "min": 0, "max": 7, "default": 0, "osc_suitable": False}],
-                inputs=[{"id": 0, "name": "CLOCK", "type": "input"}, {"id": 1, "name": "RESET", "type": "input"}],
-                outputs=[{"id": 0, "name": "GATE", "type": "output"}, {"id": 1, "name": "CV", "type": "output"}],
-                tags=["sequencer"]),
-            **_mod(fundamental, "SEQ-3",
-                params=[{"id": 0, "label": "STEP", "min": 0, "max": 7, "default": 0, "osc_suitable": False}],
-                inputs=[{"id": 0, "name": "CLOCK", "type": "input"}, {"id": 1, "name": "RESET", "type": "input"}],
-                outputs=[{"id": 0, "name": "GATE", "type": "output"}, {"id": 1, "name": "CV1", "type": "output"}, {"id": 2, "name": "CV2", "type": "output"}, {"id": 3, "name": "CV3", "type": "output"}],
-                tags=["sequencer"]),
-            **_mod(fundamental, "DELAY",
+                tags=["envelope"],
+            ),
+            **_mod(
+                fundamental,
+                "RANDOM",
                 params=[
-                    {"id": 0, "label": "TIME", "min": 0, "max": 1, "default": 0.3, "osc_suitable": True},
-                    {"id": 1, "label": "FEEDBACK", "min": 0, "max": 1, "default": 0.3, "osc_suitable": True},
+                    {
+                        "id": 0,
+                        "label": "MODE",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    }
                 ],
-                inputs=[{"id": 0, "name": "AUDIO_IN", "type": "input"}, {"id": 1, "name": "TIME_CV", "type": "input"}],
-                outputs=[{"id": 0, "name": "AUDIO_OUT", "type": "output"}],
-                tags=["fx"]),
-            **_mod(fundamental, "SPRING REVERB",
+                inputs=[{"id": 0, "name": "TRIG", "type": "input"}],
+                outputs=[
+                    {"id": 0, "name": "UNI", "type": "output"},
+                    {"id": 1, "name": "BI", "type": "output"},
+                    {"id": 2, "name": "TRIG", "type": "output"},
+                ],
+                tags=["random"],
+            ),
+            **_mod(
+                fundamental,
+                "SEQ",
                 params=[
-                    {"id": 0, "label": "SIZE", "min": 0, "max": 1, "default": 0.5, "osc_suitable": True},
-                    {"id": 1, "label": "DAMP", "min": 0, "max": 1, "default": 0.5, "osc_suitable": False},
+                    {
+                        "id": 0,
+                        "label": "STEP",
+                        "min": 0,
+                        "max": 7,
+                        "default": 0,
+                        "osc_suitable": False,
+                    }
+                ],
+                inputs=[
+                    {"id": 0, "name": "CLOCK", "type": "input"},
+                    {"id": 1, "name": "RESET", "type": "input"},
+                ],
+                outputs=[
+                    {"id": 0, "name": "GATE", "type": "output"},
+                    {"id": 1, "name": "CV", "type": "output"},
+                ],
+                tags=["sequencer"],
+            ),
+            **_mod(
+                fundamental,
+                "SEQ-3",
+                params=[
+                    {
+                        "id": 0,
+                        "label": "STEP",
+                        "min": 0,
+                        "max": 7,
+                        "default": 0,
+                        "osc_suitable": False,
+                    }
+                ],
+                inputs=[
+                    {"id": 0, "name": "CLOCK", "type": "input"},
+                    {"id": 1, "name": "RESET", "type": "input"},
+                ],
+                outputs=[
+                    {"id": 0, "name": "GATE", "type": "output"},
+                    {"id": 1, "name": "CV1", "type": "output"},
+                    {"id": 2, "name": "CV2", "type": "output"},
+                    {"id": 3, "name": "CV3", "type": "output"},
+                ],
+                tags=["sequencer"],
+            ),
+            **_mod(
+                fundamental,
+                "DELAY",
+                params=[
+                    {
+                        "id": 0,
+                        "label": "TIME",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.3,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 1,
+                        "label": "FEEDBACK",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.3,
+                        "osc_suitable": True,
+                    },
+                ],
+                inputs=[
+                    {"id": 0, "name": "AUDIO_IN", "type": "input"},
+                    {"id": 1, "name": "TIME_CV", "type": "input"},
+                ],
+                outputs=[{"id": 0, "name": "AUDIO_OUT", "type": "output"}],
+                tags=["fx"],
+            ),
+            **_mod(
+                fundamental,
+                "SPRING REVERB",
+                params=[
+                    {
+                        "id": 0,
+                        "label": "SIZE",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.5,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 1,
+                        "label": "DAMP",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.5,
+                        "osc_suitable": False,
+                    },
                 ],
                 inputs=[{"id": 0, "name": "AUDIO_IN", "type": "input"}],
                 outputs=[{"id": 0, "name": "AUDIO_OUT", "type": "output"}],
-                tags=["fx"]),
-            **_mod(fundamental, "MIXER",
+                tags=["fx"],
+            ),
+            **_mod(
+                fundamental,
+                "MIXER",
                 params=[
-                    {"id": 0, "label": "CH1", "min": 0, "max": 1, "default": 0.8, "osc_suitable": True},
-                    {"id": 1, "label": "CH2", "min": 0, "max": 1, "default": 0.8, "osc_suitable": True},
-                    {"id": 2, "label": "CH3", "min": 0, "max": 1, "default": 0.8, "osc_suitable": True},
-                    {"id": 3, "label": "CH4", "min": 0, "max": 1, "default": 0.8, "osc_suitable": True},
+                    {
+                        "id": 0,
+                        "label": "CH1",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.8,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 1,
+                        "label": "CH2",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.8,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 2,
+                        "label": "CH3",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.8,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 3,
+                        "label": "CH4",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.8,
+                        "osc_suitable": True,
+                    },
                 ],
-                inputs=[{"id": i, "name": f"CH{i+1}", "type": "input"} for i in range(4)],
-                outputs=[{"id": 0, "name": "OUT_L", "type": "output"}, {"id": 1, "name": "OUT_R", "type": "output"}],
-                tags=["mixer"]),
-            **_mod(fundamental, "AUDIO-8",
-                params=[{"id": i, "label": f"LEVEL {i//2+1}", "min": 0, "max": 1, "default": 1, "osc_suitable": False} for i in range(0, 8, 2)],
-                inputs=[{"id": i, "name": f"IN {i+1}", "type": "input"} for i in range(8)],
-                outputs=[{"id": 0, "name": "OUT L", "type": "output"}, {"id": 1, "name": "OUT R", "type": "output"}],
-                tags=["output"]),
-            **_mod(fundamental, "LFO-2",
+                inputs=[{"id": i, "name": f"CH{i + 1}", "type": "input"} for i in range(4)],
+                outputs=[
+                    {"id": 0, "name": "OUT_L", "type": "output"},
+                    {"id": 1, "name": "OUT_R", "type": "output"},
+                ],
+                tags=["mixer"],
+            ),
+            **_mod(
+                fundamental,
+                "AUDIO-8",
                 params=[
-                    {"id": 0, "label": "FREQ", "min": 0, "max": 1, "default": 0.5, "osc_suitable": True},
-                    {"id": 1, "label": "GAIN", "min": 0, "max": 1, "default": 1, "osc_suitable": False},
+                    {
+                        "id": i,
+                        "label": f"LEVEL {i // 2 + 1}",
+                        "min": 0,
+                        "max": 1,
+                        "default": 1,
+                        "osc_suitable": False,
+                    }
+                    for i in range(0, 8, 2)
+                ],
+                inputs=[{"id": i, "name": f"IN {i + 1}", "type": "input"} for i in range(8)],
+                outputs=[
+                    {"id": 0, "name": "OUT L", "type": "output"},
+                    {"id": 1, "name": "OUT R", "type": "output"},
+                ],
+                tags=["output"],
+            ),
+            **_mod(
+                fundamental,
+                "LFO-2",
+                params=[
+                    {
+                        "id": 0,
+                        "label": "FREQ",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0.5,
+                        "osc_suitable": True,
+                    },
+                    {
+                        "id": 1,
+                        "label": "GAIN",
+                        "min": 0,
+                        "max": 1,
+                        "default": 1,
+                        "osc_suitable": False,
+                    },
                 ],
                 inputs=[{"id": 0, "name": "RESET", "type": "input"}],
-                outputs=[{"id": 0, "name": "SIN", "type": "output"}, {"id": 1, "name": "TRI", "type": "output"}, {"id": 2, "name": "SAW", "type": "output"}, {"id": 3, "name": "SQR", "type": "output"}],
-                tags=["modulation"]),
-            **_mod(fundamental, "PULSE PROCESSOR",
+                outputs=[
+                    {"id": 0, "name": "SIN", "type": "output"},
+                    {"id": 1, "name": "TRI", "type": "output"},
+                    {"id": 2, "name": "SAW", "type": "output"},
+                    {"id": 3, "name": "SQR", "type": "output"},
+                ],
+                tags=["modulation"],
+            ),
+            **_mod(
+                fundamental,
+                "PULSE PROCESSOR",
                 params=[
-                    {"id": 0, "label": "MODE", "min": 0, "max": 1, "default": 0, "osc_suitable": False},
-                    {"id": 1, "label": "DELAY", "min": 0, "max": 1, "default": 0, "osc_suitable": False},
+                    {
+                        "id": 0,
+                        "label": "MODE",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
+                    {
+                        "id": 1,
+                        "label": "DELAY",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": False,
+                    },
                 ],
                 inputs=[{"id": 0, "name": "TRIG_IN", "type": "input"}],
-                outputs=[{"id": 0, "name": "TRIG_OUT", "type": "output"}, {"id": 1, "name": "GATE", "type": "output"}],
-                tags=["utility"]),
+                outputs=[
+                    {"id": 0, "name": "TRIG_OUT", "type": "output"},
+                    {"id": 1, "name": "GATE", "type": "output"},
+                ],
+                tags=["utility"],
+            ),
         ),
         "cvOSCcv": {
             "OSC-RECV": {
@@ -177,9 +560,19 @@ def _builtin_catalog() -> dict[str, dict]:
                 "display_name": "OSC-RECV",
                 "function_tags": ["osc"],
                 "persona_tags": ["generative", "performance"],
-                "params": [{"id": i, "label": f"Param {i+1}", "min": 0, "max": 1, "default": 0, "osc_suitable": True} for i in range(8)],
+                "params": [
+                    {
+                        "id": i,
+                        "label": f"Param {i + 1}",
+                        "min": 0,
+                        "max": 1,
+                        "default": 0,
+                        "osc_suitable": True,
+                    }
+                    for i in range(8)
+                ],
                 "inputs": [],
-                "outputs": [{"id": i, "name": f"OUT {i+1}", "type": "output"} for i in range(8)],
+                "outputs": [{"id": i, "name": f"OUT {i + 1}", "type": "output"} for i in range(8)],
             }
         },
     }
@@ -188,6 +581,7 @@ def _builtin_catalog() -> dict[str, dict]:
 # ---------------------------------------------------------------------------
 # Slugify
 # ---------------------------------------------------------------------------
+
 
 def _slugify(name: str) -> str:
     s = name.lower().strip()
@@ -259,8 +653,8 @@ def _assign_positions(modules: list[dict]) -> list[dict]:
 # Module instantiation
 # ---------------------------------------------------------------------------
 
-def _make_module(mod_id: int, plugin: str, model: str,
-                 catalog: dict[str, dict]) -> dict:
+
+def _make_module(mod_id: int, plugin: str, model: str, catalog: dict[str, dict]) -> dict:
     """Instantiate a module from catalog data, or with bare defaults."""
     entry = catalog.get(plugin, {}).get(model)
     params = {}
@@ -278,8 +672,7 @@ def _make_module(mod_id: int, plugin: str, model: str,
     }
 
 
-def _make_cable(cable_id: int, out_mod: int, out_port: int,
-                in_mod: int, in_port: int) -> dict:
+def _make_cable(cable_id: int, out_mod: int, out_port: int, in_mod: int, in_port: int) -> dict:
     return {
         "id": cable_id,
         "output_module_id": out_mod,
@@ -292,6 +685,7 @@ def _make_cable(cable_id: int, out_mod: int, out_port: int,
 # ---------------------------------------------------------------------------
 # OSC wiring
 # ---------------------------------------------------------------------------
+
 
 def _pick_osc_params(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
     """Select 4-8 headline params for OSC mapping.
@@ -306,19 +700,22 @@ def _pick_osc_params(modules: list[dict], catalog: dict[str, dict]) -> list[dict
         suitable = [p for p in entry.get("params", []) if p.get("osc_suitable")]
         for p in suitable[:2]:  # at most 2 per module
             label = f"{mod['model']}_{p['label']}".lower().replace(" ", "_")
-            osc_map.append({
-                "module_id": mod["id"],
-                "param_id": p["id"],
-                "label": label,
-                "min": p.get("min", 0),
-                "max": p.get("max", 1),
-            })
+            osc_map.append(
+                {
+                    "module_id": mod["id"],
+                    "param_id": p["id"],
+                    "label": label,
+                    "min": p.get("min", 0),
+                    "max": p.get("max", 1),
+                }
+            )
     return osc_map[:8]  # cap at 8
 
 
 # ---------------------------------------------------------------------------
 # Cable builder
 # ---------------------------------------------------------------------------
+
 
 def _build_cables(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
     """Auto-wire modules left-to-right in signal-chain order.
@@ -351,9 +748,9 @@ def _build_cables(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
         curr = modules[i]
         nxt = modules[i + 1]
         # Skip wiring to AUDIO-8 or OSC-RECV — handled separately
-        if (nxt["plugin"] == "Fundamental" and nxt["model"] == "AUDIO-8"):
+        if nxt["plugin"] == "Fundamental" and nxt["model"] == "AUDIO-8":
             continue
-        if (nxt["plugin"] == "cvOSCcv" and nxt["model"] == "OSC-RECV"):
+        if nxt["plugin"] == "cvOSCcv" and nxt["model"] == "OSC-RECV":
             continue
 
         out_port = _port(curr["plugin"], curr["model"], "output", 0)
@@ -369,8 +766,9 @@ def _build_cables(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
             src = modules[source_idx]
             out_port = _port(src["plugin"], src["model"], "output", 0)
             if out_port is not None:
-                cables.append(_make_cable(cable_id, src["id"], out_port,
-                                          modules[audio_out_idx]["id"], 0))
+                cables.append(
+                    _make_cable(cable_id, src["id"], out_port, modules[audio_out_idx]["id"], 0)
+                )
                 cable_id += 1
 
     # Wire OSC receiver outputs to first N params
@@ -384,11 +782,15 @@ def _build_cables(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
             suitable = [p for p in entry.get("params", []) if p.get("osc_suitable")]
             for pi, p in enumerate(suitable[:2]):
                 osc_out = pi  # use OSC-RECV output 0, 1, etc.
-                cables.append(_make_cable(
-                    cable_id,
-                    modules[osc_recv_idx]["id"], osc_out,
-                    mod["id"], p["id"],
-                ))
+                cables.append(
+                    _make_cable(
+                        cable_id,
+                        modules[osc_recv_idx]["id"],
+                        osc_out,
+                        mod["id"],
+                        p["id"],
+                    )
+                )
                 cable_id += 1
 
     return cables
@@ -397,6 +799,7 @@ def _build_cables(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
+
 
 def generate_patch(
     name: str,
@@ -494,15 +897,17 @@ def generate_patch(
     }
 
     # --- Sidecar ---
-    sidecar_md = generate_sidecar({
-        "name": name,
-        "slug": slug,
-        "persona": persona,
-        "description": description,
-        "modules": modules,
-        "cables": cables,
-        "osc_map": osc_map,
-    })
+    sidecar_md = generate_sidecar(
+        {
+            "name": name,
+            "slug": slug,
+            "persona": persona,
+            "description": description,
+            "modules": modules,
+            "cables": cables,
+            "osc_map": osc_map,
+        }
+    )
 
     return {
         "patch_json": patch_json,

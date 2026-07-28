@@ -1,6 +1,7 @@
 """Tests for patch generation."""
 
 import json
+
 from vcv_rack_mcp.patch_generator import generate_patch
 
 

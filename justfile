@@ -1,4 +1,4 @@
-set windows-shell := ["pwsh.exe", "-NoLogo", "-Command"]
+set windows-shell := ["powershell.exe", "-NoProfile", "-Command"]
 
 default:
     @just --list
@@ -26,4 +26,4 @@ validate-catalog:
 
 # Run release dry run (mcpb packaging only, skips sidecar and tauri nsis)
 release-dry:
-    pwsh -NoProfile -File scripts/release.ps1 -DryRun -SkipSidecar -SkipNsis
+    powershell.exe -NoProfile -File scripts/release.ps1 -DryRun -SkipSidecar -SkipNsis

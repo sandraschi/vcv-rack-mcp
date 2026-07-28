@@ -43,18 +43,20 @@ mcp = FastMCP(
     - vcv_catalog: search, get_module, verify_installed, library_link, sideload, suggest_rack
     - vcv_live: address_map, performance_sheet
     - vcv_agentic_workflow: ctx.sample loop for iterative generation
-    """
+    """,
 )
 
 _patch_store: dict[str, dict] = {}
 
 
 def _slugify(name: str) -> str:
-    return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
+    return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
 
 # ============================================================================
 # vcv_patch — Portmanteau
 # ============================================================================
+
 
 @mcp.tool()
 async def vcv_patch(
@@ -88,7 +90,9 @@ async def vcv_patch(
             return {"success": False, "error": "name is required"}
         slug = _slugify(name)
         pid = slug or str(uuid.uuid4())[:8]
-        result = generate_patch(name=name, description=description, persona=persona, module_hints=module_hints)
+        result = generate_patch(
+            name=name, description=description, persona=persona, module_hints=module_hints
+        )
         patch_data = {
             "id": pid,
             "name": name,
@@ -104,7 +108,13 @@ async def vcv_patch(
         }
         _patch_store[pid] = patch_data
         await depot.save_patch(patch_data)
-        return {"success": True, "operation": "create", "patch_id": pid, "path": str(settings.DEPOT_DIR / f"{slug}.vcv"), "warnings": result.get("warnings", [])}
+        return {
+            "success": True,
+            "operation": "create",
+            "patch_id": pid,
+            "path": str(settings.DEPOT_DIR / f"{slug}.vcv"),
+            "warnings": result.get("warnings", []),
+        }
 
     if op == "edit":
         if not patch_id or not instruction:
@@ -113,7 +123,11 @@ async def vcv_patch(
         if not existing:
             return {"success": False, "error": f"patch {patch_id} not found"}
         new_version = existing.get("version", 1) + 1
-        result = generate_patch(name=existing["name"], description=instruction, persona=existing.get("persona", "generative"))
+        result = generate_patch(
+            name=existing["name"],
+            description=instruction,
+            persona=existing.get("persona", "generative"),
+        )
         existing["version"] = new_version
         existing["parent_version"] = str(new_version - 1)
         existing["modules_json"] = json.dumps(result["modules_json"])
@@ -121,7 +135,12 @@ async def vcv_patch(
         existing["sidecar_md"] = result["sidecar_md"]
         _patch_store[patch_id] = existing
         await depot.save_patch(existing)
-        return {"success": True, "operation": "edit", "patch_id": patch_id, "new_version": new_version}
+        return {
+            "success": True,
+            "operation": "edit",
+            "patch_id": patch_id,
+            "new_version": new_version,
+        }
 
     if op == "validate":
         patch_data = None
@@ -132,16 +151,34 @@ async def vcv_patch(
             if p.exists():
                 with open(p) as f:
                     raw = json.load(f)
-                patch_data = {"modules_json": json.dumps(raw.get("modules", [])), "cables_json": json.dumps(raw.get("cables", []))}
+                patch_data = {
+                    "modules_json": json.dumps(raw.get("modules", [])),
+                    "cables_json": json.dumps(raw.get("cables", [])),
+                }
         if not patch_data:
             return {"success": False, "error": "patch_id or path required"}
-        modules = json.loads(patch_data["modules_json"]) if isinstance(patch_data["modules_json"], str) else patch_data["modules_json"]
-        cables = json.loads(patch_data["cables_json"]) if isinstance(patch_data["cables_json"], str) else patch_data["cables_json"]
+        modules = (
+            json.loads(patch_data["modules_json"])
+            if isinstance(patch_data["modules_json"], str)
+            else patch_data["modules_json"]
+        )
+        cables = (
+            json.loads(patch_data["cables_json"])
+            if isinstance(patch_data["cables_json"], str)
+            else patch_data["cables_json"]
+        )
         report = await validate_patch(modules, cables)
-        return {"success": report["valid"], "operation": "validate", "valid": report["valid"], "report": report["report"]}
+        return {
+            "success": report["valid"],
+            "operation": "validate",
+            "valid": report["valid"],
+            "report": report["report"],
+        }
 
     if op == "list":
-        patches = await depot.list_patches(persona=persona if persona != "all" else None, limit=limit)
+        patches = await depot.list_patches(
+            persona=persona if persona != "all" else None, limit=limit
+        )
         return {"success": True, "operation": "list", "patches": patches}
 
     if op == "get":
@@ -158,7 +195,12 @@ async def vcv_patch(
         if not settings.RACK_EXE.exists():
             return {"success": False, "error": f"Rack not found at {settings.RACK_EXE}"}
         try:
-            subprocess.run(["tasklist", "/FI", "IMAGENAME eq Rack.exe"], capture_output=True, text=True, timeout=5)
+            subprocess.run(
+                ["tasklist", "/FI", "IMAGENAME eq Rack.exe"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
         except Exception:
             pass
         patch_path = settings.DEPOT_DIR / f"{patch_id}.vcv"
@@ -168,7 +210,11 @@ async def vcv_patch(
         return {"success": True, "operation": "open_in_rack", "pid": "launched"}
 
     if op == "rack_cycle":
-        return {"success": True, "operation": "rack_cycle", "message": "Restart choreography: close Rack, stage files, relaunch. Use confirm=true to proceed. (GUI automation is banned — process lifecycle only.)"}
+        return {
+            "success": True,
+            "operation": "rack_cycle",
+            "message": "Restart choreography: close Rack, stage files, relaunch. Use confirm=true to proceed. (GUI automation is banned — process lifecycle only.)",
+        }
 
     if op == "import":
         if not path:
@@ -181,8 +227,12 @@ async def vcv_patch(
         slug = _slugify(p.stem)
         pid = slug or str(uuid.uuid4())[:8]
         patch_data = {
-            "id": pid, "name": p.stem, "slug": slug, "persona": "hybrid",
-            "description": f"Imported from {path}", "version": 1,
+            "id": pid,
+            "name": p.stem,
+            "slug": slug,
+            "persona": "hybrid",
+            "description": f"Imported from {path}",
+            "version": 1,
             "modules_json": json.dumps(raw.get("modules", [])),
             "cables_json": json.dumps(raw.get("cables", [])),
             "validation_status": "unknown",
@@ -197,6 +247,7 @@ async def vcv_patch(
 # ============================================================================
 # vcv_catalog — Portmanteau
 # ============================================================================
+
 
 @mcp.tool()
 async def vcv_catalog(
@@ -225,14 +276,22 @@ async def vcv_catalog(
 
     if op == "search":
         results = search_catalog(function_tag=function_tag, persona_tag=persona_tag, text=query)
-        return {"success": True, "operation": "search", "count": len(results), "modules": results[:limit]}
+        return {
+            "success": True,
+            "operation": "search",
+            "count": len(results),
+            "modules": results[:limit],
+        }
 
     if op == "get_module":
         if not plugin_slug or not model_slug:
             return {"success": False, "error": "plugin_slug and model_slug required"}
         mod = get_module(plugin_slug, model_slug)
         if not mod:
-            return {"success": False, "error": f"module {plugin_slug}/{model_slug} not found in catalog"}
+            return {
+                "success": False,
+                "error": f"module {plugin_slug}/{model_slug} not found in catalog",
+            }
         return {"success": True, "operation": "get_module", "module": mod}
 
     if op == "verify_installed":
@@ -247,21 +306,45 @@ async def vcv_catalog(
             ps = mod.get("plugin_slug", "")
             if ps and ps not in installed and ps not in ("cvOSCcv", "OSCelot"):
                 missing.append(ps)
-        return {"success": True, "operation": "verify_installed", "total": len(catalog), "missing": list(set(missing))}
+        return {
+            "success": True,
+            "operation": "verify_installed",
+            "total": len(catalog),
+            "missing": list(set(missing)),
+        }
 
     if op == "library_link":
         if not plugin_slug or not model_slug:
             return {"success": False, "error": "plugin_slug and model_slug required"}
         url = f"https://library.vcvrack.com/{plugin_slug}/{model_slug}"
-        return {"success": True, "operation": "library_link", "url": url, "note": "Subscribe on this page. Install completes inside Rack on restart — no headless install API exists."}
+        return {
+            "success": True,
+            "operation": "library_link",
+            "url": url,
+            "note": "Subscribe on this page. Install completes inside Rack on restart — no headless install API exists.",
+        }
 
     if op == "sideload":
         if not url:
             return {"success": False, "error": "url required (GitHub release .vcvplugin)"}
         if "github.com" not in url.lower() or not url.endswith(".vcvplugin"):
-            return {"success": False, "error": "Only GitHub-released .vcvplugin files are accepted. Refusing unknown origin."}
-        await depot.save_sideload({"plugin_slug": url.split("/")[-1].replace(".vcvplugin", ""), "source_url": url, "provenance": "github"})
-        return {"success": True, "operation": "sideload", "message": "Sideload staged. Use rack_cycle to restart Rack for the plugin to load.", "url": url}
+            return {
+                "success": False,
+                "error": "Only GitHub-released .vcvplugin files are accepted. Refusing unknown origin.",
+            }
+        await depot.save_sideload(
+            {
+                "plugin_slug": url.split("/")[-1].replace(".vcvplugin", ""),
+                "source_url": url,
+                "provenance": "github",
+            }
+        )
+        return {
+            "success": True,
+            "operation": "sideload",
+            "message": "Sideload staged. Use rack_cycle to restart Rack for the plugin to load.",
+            "url": url,
+        }
 
     if op == "suggest_rack":
         results = search_catalog(persona_tag=persona_tag or "both")
@@ -271,7 +354,12 @@ async def vcv_catalog(
         tags = set()
         for m in results:
             tags.update(m.get("function_tags", []))
-        return {"success": True, "operation": "suggest_rack", "suggestion": f"Recommended modules for {persona_tag or 'both'}: {', '.join(sorted(tags))}", "module_count": len(results)}
+        return {
+            "success": True,
+            "operation": "suggest_rack",
+            "suggestion": f"Recommended modules for {persona_tag or 'both'}: {', '.join(sorted(tags))}",
+            "module_count": len(results),
+        }
 
     return {"success": False, "error": f"unknown operation: {operation}"}
 
@@ -279,6 +367,7 @@ async def vcv_catalog(
 # ============================================================================
 # vcv_live — Portmanteau
 # ============================================================================
+
 
 @mcp.tool()
 async def vcv_live(
@@ -301,7 +390,12 @@ async def vcv_live(
         data = _patch_store.get(patch_id) or await depot.get_patch(patch_id)
         if not data:
             return {"success": False, "error": f"patch {patch_id} not found"}
-        return {"success": True, "operation": "address_map", "patch_id": patch_id, "address_map": json.loads(data.get("osc_address_map", "{}"))}
+        return {
+            "success": True,
+            "operation": "address_map",
+            "patch_id": patch_id,
+            "address_map": json.loads(data.get("osc_address_map", "{}")),
+        }
 
     if operation == "performance_sheet":
         if not patch_id:
@@ -309,7 +403,9 @@ async def vcv_live(
         data = _patch_store.get(patch_id) or await depot.get_patch(patch_id)
         if not data:
             return {"success": False, "error": f"patch {patch_id} not found"}
-        json.loads(data["modules_json"]) if isinstance(data["modules_json"], str) else data["modules_json"]
+        json.loads(data["modules_json"]) if isinstance(data["modules_json"], str) else data[
+            "modules_json"
+        ]
         address_map = json.loads(data.get("osc_address_map", "{}"))
         sheet = generate_performance_sheet(
             name=data["name"],
@@ -317,7 +413,12 @@ async def vcv_live(
             address_map=address_map,
             signal_flow=f"Generated patch '{data['name']}' ({data.get('persona', 'hybrid')})",
         )
-        return {"success": True, "operation": "performance_sheet", "patch_id": patch_id, "sheet": sheet}
+        return {
+            "success": True,
+            "operation": "performance_sheet",
+            "patch_id": patch_id,
+            "sheet": sheet,
+        }
 
     return {"success": False, "error": f"unknown operation: {operation}"}
 
@@ -325,6 +426,7 @@ async def vcv_live(
 # ============================================================================
 # Agentic workflow
 # ============================================================================
+
 
 @mcp.tool()
 async def vcv_agentic_workflow(
@@ -362,17 +464,29 @@ async def vcv_agentic_workflow(
         if report["valid"]:
             pid = _slugify(name) or str(uuid.uuid4())[:8]
             patch_data = {
-                "id": pid, "name": name, "slug": pid, "persona": persona,
-                "description": brief, "version": 1,
-                "modules_json": json.dumps(modules), "cables_json": json.dumps(cables),
+                "id": pid,
+                "name": name,
+                "slug": pid,
+                "persona": persona,
+                "description": brief,
+                "version": 1,
+                "modules_json": json.dumps(modules),
+                "cables_json": json.dumps(cables),
                 "sidecar_md": result.get("sidecar_md", ""),
                 "osc_address_map": json.dumps(result.get("osc_map", {})),
                 "validation_status": "passed",
             }
             _patch_store[pid] = patch_data
             await depot.save_patch(patch_data)
-            await depot.update_job(job_id, status="complete", result_patch_id=pid, iterations=iteration + 1)
-            return {"success": True, "patch_id": pid, "iterations": iteration + 1, "report": last_report}
+            await depot.update_job(
+                job_id, status="complete", result_patch_id=pid, iterations=iteration + 1
+            )
+            return {
+                "success": True,
+                "patch_id": pid,
+                "iterations": iteration + 1,
+                "report": last_report,
+            }
 
     await depot.update_job(job_id, status="failed", iterations=max_iterations)
     return {
@@ -380,13 +494,17 @@ async def vcv_agentic_workflow(
         "error": f"Failed to produce valid patch after {max_iterations} iterations",
         "iterations": max_iterations,
         "report": last_report,
-        "recovery_options": ["Refine the brief and retry", "Use vcv_catalog suggest_rack for module recommendations"],
+        "recovery_options": [
+            "Refine the brief and retry",
+            "Use vcv_catalog suggest_rack for module recommendations",
+        ],
     }
 
 
 # ============================================================================
 # Prefab cards
 # ============================================================================
+
 
 @mcp.tool(app=True)
 async def show_patch_card(patch_id: str) -> dict:
@@ -398,9 +516,17 @@ async def show_patch_card(patch_id: str) -> dict:
     """
     data = _patch_store.get(patch_id) or await depot.get_patch(patch_id)
     if not data:
-        return {"success": False, "error": f"patch {patch_id} not found", "content": f"Patch {patch_id} not found"}
+        return {
+            "success": False,
+            "error": f"patch {patch_id} not found",
+            "content": f"Patch {patch_id} not found",
+        }
 
-    modules = json.loads(data["modules_json"]) if isinstance(data["modules_json"], str) else data["modules_json"]
+    modules = (
+        json.loads(data["modules_json"])
+        if isinstance(data["modules_json"], str)
+        else data["modules_json"]
+    )
     with PrefabApp(title=f"Patch: {data['name']}") as app:
         Heading(data["name"])
         Row(label="Persona", value=data.get("persona", "?"))
@@ -415,7 +541,9 @@ async def show_patch_card(patch_id: str) -> dict:
 
 
 @mcp.tool(app=True)
-async def show_catalog_card(function_tag: str | None = None, persona_tag: str | None = None) -> dict:
+async def show_catalog_card(
+    function_tag: str | None = None, persona_tag: str | None = None
+) -> dict:
     """
     Show a rich in-chat card for the module catalog.
 
@@ -431,12 +559,17 @@ async def show_catalog_card(function_tag: str | None = None, persona_tag: str | 
         if len(modules) > 15:
             Row(label="...", value=f"{len(modules) - 15} more")
 
-    return {"success": True, "content": f"Catalog: {len(modules)} modules", "structured_content": app}
+    return {
+        "success": True,
+        "content": f"Catalog: {len(modules)} modules",
+        "structured_content": app,
+    }
 
 
 # ============================================================================
 # Hub status
 # ============================================================================
+
 
 @mcp.tool()
 async def hub_status() -> dict:
@@ -463,6 +596,7 @@ async def hub_status() -> dict:
 # Entry point
 # ============================================================================
 
+
 async def _init():
     settings.DEPOT_DIR.mkdir(parents=True, exist_ok=True)
     await depot.init_db()
@@ -481,16 +615,18 @@ def build_app():
         rack_ok = settings.RACK_EXE.exists()
         depot_ok = settings.DEPOT_DIR.exists()
         patches = await depot.list_patches(limit=5)
-        return JSONResponse({
-            "success": True,
-            "server": "vcv-rack-mcp",
-            "version": "0.1.0",
-            "catalog_size": len(catalog),
-            "rack_installed": rack_ok,
-            "rack_path": str(settings.RACK_EXE) if rack_ok else "not found",
-            "depot_ok": depot_ok,
-            "recent_patches": len(patches),
-        })
+        return JSONResponse(
+            {
+                "success": True,
+                "server": "vcv-rack-mcp",
+                "version": "0.1.0",
+                "catalog_size": len(catalog),
+                "rack_installed": rack_ok,
+                "rack_path": str(settings.RACK_EXE) if rack_ok else "not found",
+                "depot_ok": depot_ok,
+                "recent_patches": len(patches),
+            }
+        )
 
     async def api_catalog(request: Request) -> JSONResponse:
         function_tag = request.query_params.get("function_tag")
@@ -502,7 +638,9 @@ def build_app():
     async def api_patches_list(request: Request) -> JSONResponse:
         persona = request.query_params.get("persona")
         limit = int(request.query_params.get("limit", "50"))
-        patches = await depot.list_patches(persona=persona if persona != "all" else None, limit=limit)
+        patches = await depot.list_patches(
+            persona=persona if persona != "all" else None, limit=limit
+        )
         return JSONResponse({"success": True, "patches": patches})
 
     async def api_patches_create(request: Request) -> JSONResponse:
@@ -515,7 +653,9 @@ def build_app():
             return JSONResponse({"success": False, "error": "name is required"}, status_code=400)
         slug = _slugify(name)
         pid = slug or str(uuid.uuid4())[:8]
-        result = generate_patch(name=name, description=description, persona=persona, module_hints=module_hints)
+        result = generate_patch(
+            name=name, description=description, persona=persona, module_hints=module_hints
+        )
         patch_data = {
             "id": pid,
             "name": name,
@@ -531,29 +671,41 @@ def build_app():
         }
         _patch_store[pid] = patch_data
         await depot.save_patch(patch_data)
-        return JSONResponse({"success": True, "patch_id": pid, "path": str(settings.DEPOT_DIR / f"{slug}.vcv")})
+        return JSONResponse(
+            {"success": True, "patch_id": pid, "path": str(settings.DEPOT_DIR / f"{slug}.vcv")}
+        )
 
     async def api_patches_get(request: Request) -> JSONResponse:
         patch_id = request.path_params["id"]
         data = _patch_store.get(patch_id) or await depot.get_patch(patch_id)
         if not data:
-            return JSONResponse({"success": False, "error": f"patch {patch_id} not found"}, status_code=404)
+            return JSONResponse(
+                {"success": False, "error": f"patch {patch_id} not found"}, status_code=404
+            )
         return JSONResponse({"success": True, "patch": data})
 
     async def api_patches_open(request: Request) -> JSONResponse:
         patch_id = request.path_params["id"]
         patch_path = settings.DEPOT_DIR / f"{patch_id}.vcv"
         if not patch_path.exists():
-            return JSONResponse({"success": False, "error": f"patch file not found at {patch_path}"}, status_code=404)
+            return JSONResponse(
+                {"success": False, "error": f"patch file not found at {patch_path}"},
+                status_code=404,
+            )
         if not settings.RACK_EXE.exists():
-            return JSONResponse({"success": False, "error": f"Rack not found at {settings.RACK_EXE}"}, status_code=500)
+            return JSONResponse(
+                {"success": False, "error": f"Rack not found at {settings.RACK_EXE}"},
+                status_code=500,
+            )
         subprocess.Popen([str(settings.RACK_EXE), str(patch_path)])
         return JSONResponse({"success": True, "pid": "launched"})
 
     async def api_jobs_list(request: Request) -> JSONResponse:
         db_conn = await depot._get_db()
         try:
-            cursor = await db_conn.execute("SELECT * FROM agentic_jobs ORDER BY created_at DESC LIMIT 50")
+            cursor = await db_conn.execute(
+                "SELECT * FROM agentic_jobs ORDER BY created_at DESC LIMIT 50"
+            )
             rows = await cursor.fetchall()
             jobs = [dict(r) for r in rows]
             return JSONResponse({"success": True, "jobs": jobs})
@@ -591,6 +743,7 @@ def build_app():
 
 def main():
     import argparse
+
     parser = argparse.ArgumentParser(description="vcv-rack-mcp server")
     parser.add_argument("--http", action="store_true", help="Start HTTP transport")
     parser.add_argument("--port", type=int, default=settings.PORT, help="Port")
@@ -605,6 +758,7 @@ def main():
 
     if args.http or os.environ.get("PORT") or os.environ.get("MCP_PORT"):
         import uvicorn
+
         app = build_app()
         port = int(os.environ.get("PORT") or os.environ.get("MCP_PORT") or args.port)
         uvicorn.run(app, host=args.host, port=port)
@@ -613,6 +767,7 @@ def main():
             mcp.run(transport="stdio")
         except KeyboardInterrupt:
             console.print("\n[yellow]Shutdown[/yellow]")
+
 
 if __name__ == "__main__":
     main()

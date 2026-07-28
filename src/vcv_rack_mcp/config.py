@@ -36,15 +36,11 @@ class Settings:
 
     # -- Network --
     HOST: str = field(default_factory=lambda: os.environ.get("HOST", "127.0.0.1"))
-    PORT: int = field(
-        default_factory=lambda: int(os.environ.get("PORT", "10916"))
-    )
+    PORT: int = field(default_factory=lambda: int(os.environ.get("PORT", "10916")))
 
     # -- External services --
     OSC_MCP_BASE: str = field(
-        default_factory=lambda: os.environ.get(
-            "OSC_MCP_BASE", "http://127.0.0.1:10767"
-        )
+        default_factory=lambda: os.environ.get("OSC_MCP_BASE", "http://127.0.0.1:10767")
     )
 
     def __post_init__(self):

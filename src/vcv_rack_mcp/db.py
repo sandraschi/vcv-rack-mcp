@@ -60,6 +60,7 @@ def _now() -> str:
 # Connection helper
 # ---------------------------------------------------------------------------
 
+
 async def _get_db() -> aiosqlite.Connection:
     settings.DEPOT_DIR.mkdir(parents=True, exist_ok=True)
     db = await aiosqlite.connect(str(settings.DB_PATH))
@@ -72,6 +73,7 @@ async def _get_db() -> aiosqlite.Connection:
 # ---------------------------------------------------------------------------
 # Init
 # ---------------------------------------------------------------------------
+
 
 async def init_db() -> None:
     """Create tables if they do not exist."""
@@ -87,14 +89,13 @@ async def init_db() -> None:
 # Patches
 # ---------------------------------------------------------------------------
 
+
 async def save_patch(patch_data: dict) -> str:
     """Insert or update a patch record.  Returns the patch id."""
     pid = patch_data["id"]
     db = await _get_db()
     try:
-        existing = await db.execute(
-            "SELECT id, version FROM patches WHERE id = ?", (pid,)
-        )
+        existing = await db.execute("SELECT id, version FROM patches WHERE id = ?", (pid,))
         row = await existing.fetchone()
         if row:
             new_version = row["version"] + 1
@@ -161,9 +162,7 @@ async def get_patch(patch_id: str) -> dict | None:
         await db.close()
 
 
-async def list_patches(
-    persona: str | None = None, limit: int = 50
-) -> list[dict]:
+async def list_patches(persona: str | None = None, limit: int = 50) -> list[dict]:
     """List patches, optionally filtered by persona tag."""
     db = await _get_db()
     try:
@@ -216,6 +215,7 @@ def _row_to_patch(row: aiosqlite.Row) -> dict:
 # Sideloads
 # ---------------------------------------------------------------------------
 
+
 async def save_sideload(entry: dict) -> int:
     """Log a plugin sideload.  Returns the auto-increment id."""
     db = await _get_db()
@@ -247,6 +247,7 @@ async def list_sideloads(limit: int = 50) -> list[dict]:
 # Agentic jobs
 # ---------------------------------------------------------------------------
 
+
 async def create_job(brief: str, persona: str | None = None) -> dict:
     """Create a new agentic job.  Returns the full job record."""
     import uuid
@@ -276,9 +277,7 @@ async def update_job(job_id: str, **kwargs: Any) -> dict | None:
     values = list(updates.values()) + [job_id]
     db = await _get_db()
     try:
-        await db.execute(
-            f"UPDATE agentic_jobs SET {set_clause} WHERE id = ?", values
-        )
+        await db.execute(f"UPDATE agentic_jobs SET {set_clause} WHERE id = ?", values)
         await db.commit()
         return await get_job(job_id)
     finally:

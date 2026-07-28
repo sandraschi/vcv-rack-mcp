@@ -1,6 +1,6 @@
 """Tests for the catalog system."""
 
-from vcv_rack_mcp.catalog_loader import load_catalog, search_catalog, get_module, get_function_tags
+from vcv_rack_mcp.catalog_loader import get_function_tags, get_module, load_catalog, search_catalog
 
 
 def test_catalog_loaded():
@@ -11,7 +11,16 @@ def test_catalog_loaded():
 
 def test_catalog_entries_have_required_keys():
     catalog = load_catalog()
-    required = {"plugin_slug", "model_slug", "display_name", "function_tags", "persona_tags", "params", "inputs", "outputs"}
+    required = {
+        "plugin_slug",
+        "model_slug",
+        "display_name",
+        "function_tags",
+        "persona_tags",
+        "params",
+        "inputs",
+        "outputs",
+    }
     for mod in catalog:
         missing = required - set(mod.keys())
         assert not missing, f"{mod['display_name']}: missing {missing}"
