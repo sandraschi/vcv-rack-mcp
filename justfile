@@ -27,3 +27,5 @@ validate-catalog:
 # Run release dry run (mcpb packaging only, skips sidecar and tauri nsis)
 release-dry:
     powershell.exe -NoProfile -File scripts/release.ps1 -DryRun -SkipSidecar -SkipNsis
+
+# Bootstrap: install dev deps + pre-commit hook
