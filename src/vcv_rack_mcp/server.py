@@ -1,5 +1,5 @@
 """
-vcv-rack-mcp — MCP server for VCV Rack 2 patch authorship.
+vcv-rack-mcp - MCP server for VCV Rack 2 patch authorship.
 
 Generates valid .vcv patch files from natural-language descriptions,
 maintains a curated module catalog, emits OSC address maps for live
@@ -54,7 +54,7 @@ def _slugify(name: str) -> str:
 
 
 # ============================================================================
-# vcv_patch — Portmanteau
+# vcv_patch - Portmanteau
 # ============================================================================
 
 
@@ -73,7 +73,7 @@ async def vcv_patch(
     limit: int = 50,
 ) -> dict:
     """
-    Patch authorship portmanteau — create, edit, validate, list, get, open_in_rack, rack_cycle, import.
+    Patch authorship portmanteau - create, edit, validate, list, get, open_in_rack, rack_cycle, import.
 
     ## Return Format
     {"success": bool, "operation": str, ...operation-specific keys}
@@ -195,7 +195,8 @@ async def vcv_patch(
         if not settings.RACK_EXE.exists():
             return {"success": False, "error": f"Rack not found at {settings.RACK_EXE}"}
         try:
-            subprocess.run(
+            await asyncio.to_thread(
+                subprocess.run,
                 ["tasklist", "/FI", "IMAGENAME eq Rack.exe"],
                 capture_output=True,
                 text=True,
@@ -213,7 +214,7 @@ async def vcv_patch(
         return {
             "success": True,
             "operation": "rack_cycle",
-            "message": "Restart choreography: close Rack, stage files, relaunch. Use confirm=true to proceed. (GUI automation is banned — process lifecycle only.)",
+            "message": "Restart choreography: close Rack, stage files, relaunch. Use confirm=true to proceed. (GUI automation is banned - process lifecycle only.)",
         }
 
     if op == "import":
@@ -245,7 +246,7 @@ async def vcv_patch(
 
 
 # ============================================================================
-# vcv_catalog — Portmanteau
+# vcv_catalog - Portmanteau
 # ============================================================================
 
 
@@ -262,7 +263,7 @@ async def vcv_catalog(
     limit: int = 20,
 ) -> dict:
     """
-    Module catalog portmanteau — search, get_module, verify_installed, library_link, sideload, suggest_rack.
+    Module catalog portmanteau - search, get_module, verify_installed, library_link, sideload, suggest_rack.
 
     ## Return Format
     {"success": bool, "operation": str, ...operation-specific keys}
@@ -321,7 +322,7 @@ async def vcv_catalog(
             "success": True,
             "operation": "library_link",
             "url": url,
-            "note": "Subscribe on this page. Install completes inside Rack on restart — no headless install API exists.",
+            "note": "Subscribe on this page. Install completes inside Rack on restart - no headless install API exists.",
         }
 
     if op == "sideload":
@@ -365,7 +366,7 @@ async def vcv_catalog(
 
 
 # ============================================================================
-# vcv_live — Portmanteau
+# vcv_live - Portmanteau
 # ============================================================================
 
 
@@ -375,7 +376,7 @@ async def vcv_live(
     patch_id: str | None = None,
 ) -> dict:
     """
-    Live performance portmanteau — address_map, performance_sheet.
+    Live performance portmanteau - address_map, performance_sheet.
 
     ## Return Format
     {"success": bool, "operation": str, ...}
@@ -751,7 +752,7 @@ def main():
     args, unknown = parser.parse_known_args()
 
     asyncio.run(_init())
-    console.print("[bold cyan]VCV Rack MCP — patch authorship server[/bold cyan]")
+    console.print("[bold cyan]VCV Rack MCP - patch authorship server[/bold cyan]")
     console.print(f"  Catalog: {len(load_catalog())} modules")
     console.print(f"  Rack:    {settings.RACK_EXE}")
     console.print(f"  Depot:   {settings.DEPOT_DIR}")
