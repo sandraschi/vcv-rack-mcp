@@ -723,10 +723,14 @@ def build_app():
         asyncio.create_task(vcv_agentic_workflow(brief=brief, persona=persona))
         return JSONResponse({"success": True, "job_id": job["id"], "job": job})
 
+    async def api_health(request: Request) -> JSONResponse:
+        return JSONResponse({"status": "ok", "service": "vcv-rack-mcp"})
+
     mcp_asgi = mcp.http_app(path="/", transport="http", stateless_http=True)
     cors = Middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
     return Starlette(
         routes=[
+            Route("/health", endpoint=api_health),
             Mount("/mcp", app=mcp_asgi),
             Route("/api/status", endpoint=api_status),
             Route("/api/catalog", endpoint=api_catalog),
