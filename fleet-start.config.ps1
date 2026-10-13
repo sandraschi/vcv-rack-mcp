@@ -1,4 +1,4 @@
-﻿# Per-repo fleet start config for vcv-rack-mcp
+# Per-repo fleet start config for vcv-rack-mcp
 # Edit ports/backend target here - start.ps1 is fleet-standard.
 @{
     Name         = 'vcv-rack-mcp'
@@ -11,6 +11,7 @@
         Module     = 'vcv_rack_mcp'
         ServeArgs  = @('--http', '--port', '10916')
         SyncExtras = @('dev')
+        SyncOnStart  = $true
     }
     Frontend = @{
         Kind           = 'vite-npm'
