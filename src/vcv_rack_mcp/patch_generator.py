@@ -1,4 +1,4 @@
-"""Core patch generation engine — produces valid .vcv JSON."""
+"""Core patch generation engine - produces valid .vcv JSON."""
 
 import re
 from pathlib import Path
@@ -37,7 +37,7 @@ def _builtin_catalog() -> dict[str, dict]:
     """Minimal built-in catalog covering Fundamental modules.
 
     Used as a fallback when ``catalog/modules.yaml`` does not exist yet.
-    The full 44–50 entry catalog lives in ``catalog/modules.yaml`` (Phase 1).
+    The full 44-50 entry catalog lives in ``catalog/modules.yaml`` (Phase 1).
     """
 
     def _mod(
@@ -747,7 +747,7 @@ def _build_cables(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
     for i in range(len(modules) - 1):
         curr = modules[i]
         nxt = modules[i + 1]
-        # Skip wiring to AUDIO-8 or OSC-RECV — handled separately
+        # Skip wiring to AUDIO-8 or OSC-RECV - handled separately
         if nxt["plugin"] == "Fundamental" and nxt["model"] == "AUDIO-8":
             continue
         if nxt["plugin"] == "cvOSCcv" and nxt["model"] == "OSC-RECV":
@@ -843,12 +843,12 @@ def generate_patch(
     else:
         chain = list(_GENERATIVE_CHAIN)
 
-    # Inject module_hints — replace matching slots
+    # Inject module_hints - replace matching slots
     if module_hints:
         for hint in module_hints:
             for plugin, models in catalog.items():
                 if hint in models:
-                    # Append hinted module (don't replace — keeps defaults)
+                    # Append hinted module (don't replace - keeps defaults)
                     chain.append((plugin, hint))
                     break
 
@@ -862,7 +862,7 @@ def generate_patch(
     modules = []
     for mod_id, (plugin, model) in enumerate(chain):
         if plugin not in catalog or model not in catalog.get(plugin, {}):
-            warnings.append(f"Module {plugin}/{model} not in catalog — using bare defaults.")
+            warnings.append(f"Module {plugin}/{model} not in catalog - using bare defaults.")
         modules.append(_make_module(mod_id, plugin, model, catalog))
 
     # Filter out modules whose plugin is completely missing from catalog
@@ -972,7 +972,7 @@ def generate_sidecar(patch_data: dict) -> str:
         "",
         "- This patch was auto-generated.  Fine-tune params in Rack.",
         "- OSC map assumes cvOSCcv/OSC-RECV is installed.",
-        "- Cable routing is heuristic — may need manual adjustment.",
+        "- Cable routing is heuristic - may need manual adjustment.",
     ]
 
     return "\n".join(lines)

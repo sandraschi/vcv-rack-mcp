@@ -1,4 +1,4 @@
-"""SQLite layer for the patch depot — async via aiosqlite."""
+"""SQLite layer for the patch depot - async via aiosqlite."""
 
 import json
 from datetime import UTC, datetime

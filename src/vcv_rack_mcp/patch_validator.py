@@ -1,4 +1,4 @@
-"""Patch validation — 3 checks against catalog, installed plugins, and cable polarity."""
+"""Patch validation - 3 checks against catalog, installed plugins, and cable polarity."""
 
 from pathlib import Path
 
@@ -183,7 +183,7 @@ def _check_cables(
                 ValidationIssue(
                     "warning",
                     cable_label,
-                    f"Cannot verify output port {out_port_id} — "
+                    f"Cannot verify output port {out_port_id} - "
                     f"{out_mod['plugin']}/{out_mod['model']} not in catalog.",
                 )
             )
@@ -215,7 +215,7 @@ def _check_cables(
                 ValidationIssue(
                     "warning",
                     cable_label,
-                    f"Cannot verify input port {in_port_id} — "
+                    f"Cannot verify input port {in_port_id} - "
                     f"{in_mod['plugin']}/{in_mod['model']} not in catalog.",
                 )
             )
@@ -285,13 +285,13 @@ async def validate_patch(
 
     all_issues: list[ValidationIssue] = []
 
-    # Check 1 — catalog membership
+    # Check 1 - catalog membership
     all_issues.extend(_check_catalog_membership(modules_json, catalog))
 
-    # Check 2 — installed plugins
+    # Check 2 - installed plugins
     all_issues.extend(_check_installed_membership(modules_json))
 
-    # Check 3 — cable polarity
+    # Check 3 - cable polarity
     all_issues.extend(_check_cables(modules_json, cables_json, catalog))
 
     report = [issue.to_dict() for issue in all_issues]

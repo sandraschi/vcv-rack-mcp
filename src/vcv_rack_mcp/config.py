@@ -1,4 +1,4 @@
-"""Configuration for vcv-rack-mcp — paths and settings from env vars."""
+"""Configuration for vcv-rack-mcp - paths and settings from env vars."""
 
 import os
 from dataclasses import dataclass, field
