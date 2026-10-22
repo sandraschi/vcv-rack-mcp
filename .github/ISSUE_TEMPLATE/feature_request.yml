@@ -1,0 +1,45 @@
+name: Feature request
+description: A module, operation, or capability you want
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. Please **search existing issues first** — one request per issue, so each can be accepted or rejected on its own.
+  - type: input
+    id: summary
+    attributes:
+      label: One-line summary
+      placeholder: e.g. Catalog Stoermelder TRANSIT incl. its data schema
+    validations:
+      required: true
+  - type: dropdown
+    id: persona
+    attributes:
+      label: Who is this for?
+      options:
+        - Generative / ambient (self-playing patches)
+        - Performance / DJ (hands-on control)
+        - Both
+        - Builder (tooling, catalog, validation)
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What should it do?
+      placeholder: "Concrete behavior. For a module: plugin slug, model slug, what it does. For an op: name, inputs, outputs."
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why (your use case)
+      placeholder: What patch are you trying to build that needs this?
+    validations:
+      required: true
+  - type: textarea
+    id: sketch
+    attributes:
+      label: Implementation sketch (optional)
+      description: Anything you already know — source links (plugin repo, manual), the .vcv JSON footprint, similar existing entries. Homework here gets things built faster.

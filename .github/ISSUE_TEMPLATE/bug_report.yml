@@ -1,0 +1,45 @@
+name: Bug report
+description: Something in a generated patch or tool does not work
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please **search existing issues first** — duplicates get closed.
+  - type: input
+    id: version
+    attributes:
+      label: vcv-rack-mcp version / commit
+      placeholder: e.g. v0.2.0 or commit hash
+    validations:
+      required: true
+  - type: input
+    id: rack
+    attributes:
+      label: VCV Rack version and edition
+      placeholder: e.g. Rack 2 Free 2.6.1 on Windows
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Called vcv_patch with (operation, params...).
+        2. Opened the .vcv in Rack.
+        3. Saw ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+      placeholder: What you expected to happen, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: patch
+    attributes:
+      label: Patch file and module versions
+      description: Drag your .vcv patch file into this box. List every non-Fundamental plugin with its version (e.g. Stoermelder PackOne 2.7.0). Without the patch, most reports cannot be reproduced.
+      placeholder: ".vcv attached below. Plugins: Stoermelder PackOne 2.7.0, ..."
