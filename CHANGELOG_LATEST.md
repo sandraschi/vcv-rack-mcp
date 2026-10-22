@@ -1,5 +1,16 @@
 # CHANGELOG_LATEST — vcv-rack-mcp
 
+## v0.2.0 — 2026-10-22 (Transit module data)
+
+### Added
+- **Stoermelder TRANSIT catalog entry** (`Stoermelder-P1`/`Transit`, GPL-3.0, free): 15 params, 3 inputs, 1 output, `data_schema` for the 12-slot preset blob. Source-verified against PackOne v2 (plugin.json 2.7.0, Transit.cpp, TransitBase.hpp, official manual); `observed_json: null` pending Rack round-trip recon. Catalog now 50 modules.
+- **`vcv_patch` op `set_module_data`**: write a module's saved `data` blob (full object) or a compact Transit `presets` spec (`[{label?, fade_time?, color?, values[]}]`, optional `source_maps` bindings). Version-chained like `edit`; refuses structurally invalid Transit data with reasons.
+- **Validator Check 4 (module data)**: Transit blobs checked against `data_schema` (slot count, numeric values, binding width match); foreign blobs without a schema get a warning. `transit_data.build_transit_data` / `validate_transit_data` covered by 7 new tests (24 total passing).
+
+### Notes
+- P2 gate still needs Sandra with Rack: PackOne is NOT installed locally — sideload via Library subscribe + restart, then open the generated Transit patch and re-save for the round-trip JSON reference.
+- TransitEx (+T, 12 more slots each) noted in catalog notes but not yet catalogued.
+
 ## v0.1.0 — 2026-07-12 (initial implementation)
 
 ### Added

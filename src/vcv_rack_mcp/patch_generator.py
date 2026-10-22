@@ -735,13 +735,10 @@ def _build_cables(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
         return ports[0]["id"] if ports else idx
 
     audio_out_idx = None
-    osc_recv_idx = None
 
     for i, mod in enumerate(modules):
         if mod["plugin"] == "Fundamental" and mod["model"] == "AUDIO-8":
             audio_out_idx = i
-        if mod["plugin"] == "cvOSCcv" and mod["model"] == "OSC-RECV":
-            osc_recv_idx = i
 
     # Wire each module's main output to the next module's main input
     for i in range(len(modules) - 1):
@@ -771,27 +768,12 @@ def _build_cables(modules: list[dict], catalog: dict[str, dict]) -> list[dict]:
                 )
                 cable_id += 1
 
-    # Wire OSC receiver outputs to first N params
-    if osc_recv_idx is not None:
-        for target_i, mod in enumerate(modules):
-            if target_i == osc_recv_idx:
-                continue
-            entry = catalog.get(mod["plugin"], {}).get(mod["model"])
-            if not entry:
-                continue
-            suitable = [p for p in entry.get("params", []) if p.get("osc_suitable")]
-            for pi, p in enumerate(suitable[:2]):
-                osc_out = pi  # use OSC-RECV output 0, 1, etc.
-                cables.append(
-                    _make_cable(
-                        cable_id,
-                        modules[osc_recv_idx]["id"],
-                        osc_out,
-                        mod["id"],
-                        p["id"],
-                    )
-                )
-                cable_id += 1
+    # NOTE: no cables are created for OSC control. The cvOSCcv module plus the
+    # emitted osc_map is the control path (consumed by osc-mcp vcv_manager).
+    # .vcv cables can only target input PORTS - wiring an output to a param
+    # id never validates and Rack ignores it. (Removed 2026-10-22: the old
+    # block wired OSC-RECV outputs to param ids, failing Check 3 on every
+    # generated patch - see Transit 10-preset work.)
 
     return cables
 

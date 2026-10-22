@@ -1,5 +1,5 @@
 # vcv-rack-mcp module catalog
-# Catalog v1: 49 modules, free VCV Library only
+# Catalog v1: 50 modules, free VCV Library only
 # See PRD.md §4 for persona-split mandate (50/50 generative vs performance)
 #
 # NOTE: For community modules without a saved-patch JSON reference, param IDs,
@@ -2661,3 +2661,121 @@
       name: "OSC_8"
       type: "output"
   notes: "OSC-CV bridge module. Model slug TBD during P0 recon — may use OSCelot or cvOSCcv depending on installed version. Every generated patch includes exactly one OSC bridge module. observed_json: null — full param/port structure requires real VCV Library subscription check."
+
+- plugin_slug: "Stoermelder-P1"
+  model_slug: "Transit"
+  display_name: "TRANSIT"
+  brand: "stoermelder"
+  function_tags: ["seq", "util"]
+  persona_tags: ["both"]
+  params:
+    - id: 0
+      label: "Snapshot 1"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 1
+      label: "Snapshot 2"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 2
+      label: "Snapshot 3"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 3
+      label: "Snapshot 4"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 4
+      label: "Snapshot 5"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 5
+      label: "Snapshot 6"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 6
+      label: "Snapshot 7"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 7
+      label: "Snapshot 8"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 8
+      label: "Snapshot 9"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 9
+      label: "Snapshot 10"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 10
+      label: "Snapshot 11"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 11
+      label: "Snapshot 12"
+      min: 0.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: false
+    - id: 12
+      label: "Operating mode (Read/Auto/Write)"
+      min: 0.0
+      max: 2.0
+      default: 0.0
+      osc_suitable: false
+    - id: 13
+      label: "Fade"
+      min: 0.0
+      max: 1.0
+      default: 0.5
+      osc_suitable: true
+    - id: 14
+      label: "Shape"
+      min: -1.0
+      max: 1.0
+      default: 0.0
+      osc_suitable: true
+  inputs:
+    - id: 0
+      name: "CV"
+      type: "input"
+    - id: 1
+      name: "Reset trigger"
+      type: "input"
+    - id: 2
+      name: "Fade CV"
+      type: "input"
+  outputs:
+    - id: 0
+      name: "Envelope/trigger"
+      type: "output"
+  notes: "Parameter-morpher and sequencer: binds other modules' parameters, stores up to 12 snapshots (96 with chained +T expanders), morphs between them. Presets live in the module data blob - write via vcv_patch set_module_data (compact presets spec supported). observed_json: null - params/ports verified against PackOne v2 source (plugin.json 2.7.0, Transit.cpp, TransitBase.hpp, official manual 2026-10-22); pending Rack round-trip recon with PackOne installed."
+  data_schema:
+    slots: 12
+    keys: ["panelTheme", "ctrlUniqueId", "presets", "sourceMaps"]
+    preset_keys: ["slotUsed", "textLabel", "fadeTime", "slot", "color"]
+    source_map_keys: ["moduleId", "paramId"]

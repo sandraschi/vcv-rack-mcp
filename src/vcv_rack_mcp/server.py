@@ -27,6 +27,7 @@ from .config import settings
 from .osc_bridge import generate_performance_sheet
 from .patch_generator import generate_patch
 from .patch_validator import validate_patch
+from .transit_data import build_transit_data, validate_transit_data
 
 logger = logging.getLogger(__name__)
 console = Console()
@@ -39,7 +40,7 @@ mcp = FastMCP(
     synth patches by emitting structured data.
 
     TOOLS:
-    - vcv_patch: create, edit, validate, list, get, open_in_rack, rack_cycle, import
+    - vcv_patch: create, edit, validate, list, get, open_in_rack, rack_cycle, import, set_module_data
     - vcv_catalog: search, get_module, verify_installed, library_link, sideload, suggest_rack
     - vcv_live: address_map, performance_sheet
     - vcv_agentic_workflow: ctx.sample loop for iterative generation
@@ -71,9 +72,13 @@ async def vcv_patch(
     reason: str | None = None,
     pending_sideload: str | None = None,
     limit: int = 50,
+    module_id: int | None = None,
+    data: dict | None = None,
+    presets: list | None = None,
+    source_maps: list | None = None,
 ) -> dict:
     """
-    Patch authorship portmanteau - create, edit, validate, list, get, open_in_rack, rack_cycle, import.
+    Patch authorship portmanteau - create, edit, validate, list, get, open_in_rack, rack_cycle, import, set_module_data.
 
     ## Return Format
     {"success": bool, "operation": str, ...operation-specific keys}
@@ -82,6 +87,7 @@ async def vcv_patch(
     vcv_patch(operation="create", name="Ambient Drone", persona="generative", description="slow detuned drone")
     vcv_patch(operation="validate", patch_id="ambient-drone")
     vcv_patch(operation="list", persona="generative")
+    vcv_patch(operation="set_module_data", patch_id="ambient-drone", module_id=3, presets=[{"label": "A", "values": [0.5, 0.2]}])
     """
     op = operation
 
@@ -241,6 +247,84 @@ async def vcv_patch(
         _patch_store[pid] = patch_data
         await depot.save_patch(patch_data)
         return {"success": True, "operation": "import", "patch_id": pid}
+
+    if op == "set_module_data":
+        if not patch_id or module_id is None:
+            return {"success": False, "error": "patch_id and module_id required"}
+        if data is None and presets is None:
+            return {"success": False, "error": "data or presets required"}
+        existing = _patch_store.get(patch_id) or await depot.get_patch(patch_id)
+        if not existing:
+            return {"success": False, "error": f"patch {patch_id} not found"}
+        modules = (
+            json.loads(existing["modules_json"])
+            if isinstance(existing["modules_json"], str)
+            else existing["modules_json"]
+        )
+        target = next((m for m in modules if m.get("id") == module_id), None)
+        if target is None:
+            valid_ids = sorted(m.get("id") for m in modules if "id" in m)
+            return {
+                "success": False,
+                "error": f"module_id {module_id} not in patch {patch_id}",
+                "valid_module_ids": valid_ids,
+            }
+        plugin = target.get("plugin", "")
+        model = target.get("model", "")
+        is_transit = plugin == "Stoermelder-P1" and model in ("Transit", "TransitEx")
+        if model == "TransitEx":
+            num_slots = 24
+        else:
+            entry = get_module(plugin, model)
+            schema = (entry or {}).get("data_schema") or {}
+            num_slots = int(schema.get("slots", 12))
+        notes: list[str] = []
+        if presets is not None:
+            if not is_transit:
+                return {
+                    "success": False,
+                    "error": f"presets spec is only supported for Stoermelder Transit/TransitEx, got {plugin}/{model}",
+                }
+            if not isinstance(presets, list):
+                return {"success": False, "error": "presets must be a list of {label?, fade_time?, color?, values[]}."}
+            try:
+                target["data"] = build_transit_data(presets, source_maps, num_slots)
+            except ValueError as exc:
+                return {"success": False, "error": str(exc)}
+            notes.append(f"Wrote {len(presets)} Transit presets into {plugin}/{model} (mod_{module_id}).")
+        else:
+            if not isinstance(data, dict):
+                return {"success": False, "error": "data must be a JSON object."}
+            target["data"] = data
+            if is_transit:
+                problems = validate_transit_data(data, num_slots)
+                hard = [p for p in problems if p["severity"] == "error"]
+                if hard:
+                    return {
+                        "success": False,
+                        "error": f"Transit data invalid: {hard[0]['message']}",
+                        "issues": problems,
+                    }
+                notes.extend(f"warning: {p['message']}" for p in problems if p["severity"] == "warning")
+                notes.append(f"Stored validated Transit data on {plugin}/{model} (mod_{module_id}).")
+            else:
+                notes.append(
+                    f"No data_schema for {plugin}/{model} - stored unverified; validate flags it as a warning."
+                )
+        new_version = existing.get("version", 1) + 1
+        existing["version"] = new_version
+        existing["parent_version"] = str(new_version - 1)
+        existing["modules_json"] = json.dumps(modules)
+        _patch_store[patch_id] = existing
+        await depot.save_patch(existing)
+        return {
+            "success": True,
+            "operation": "set_module_data",
+            "patch_id": patch_id,
+            "module_id": module_id,
+            "new_version": new_version,
+            "notes": notes,
+        }
 
     return {"success": False, "error": f"unknown operation: {operation}"}
 

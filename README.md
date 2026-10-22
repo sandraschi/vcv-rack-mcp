@@ -17,7 +17,7 @@ uv run -m vcv_rack_mcp
 
 | Tool | What it does |
 |------|-------------|
-| `vcv_patch` | Create, edit, validate, list, get, open_in_rack, rack_cycle, import patches |
+| `vcv_patch` | Create, edit, validate, list, get, open_in_rack, rack_cycle, import patches, set_module_data |
 | `vcv_catalog` | Search catalog, get module details, verify installed, library link, sideload, suggest rack |
 | `vcv_live` | OSC address map, performance sheet for live tweaking |
 | `vcv_agentic_workflow` | ctx.sample loop: brief → generate → validate → retry (max 3) |
@@ -27,7 +27,7 @@ uv run -m vcv_rack_mcp
 
 ```
 vcv-rack-mcp (port 10916, stdio / HTTP /mcp)
-  ├── catalog/modules.yaml — 49 modules, 50/50 generative/performance
+  ├── catalog/modules.yaml — 50 modules, 50/50 generative/performance
   ├── depot/ — .vcv patches + SQLite metadata + sidecar .md
   └──→ osc-mcp (port 10767) — vcv_manager consumes address maps
 ```
@@ -36,9 +36,9 @@ vcv-rack-mcp (port 10916, stdio / HTTP /mcp)
 
 | Feature | Status | Gate |
 |---------|--------|------|
-| Catalog (49 modules) | Done, validated | P1 |
+| Catalog (50 modules, incl. Stoermelder TRANSIT) | Done, validated | P1 |
 | Patch generation | Done, deterministic | P2 (needs Rack round-trip) |
-| Validation (3 checks) | Done with tests | P2 |
+| Validation (4 checks, incl. module data) | Done with tests | P2 |
 | OSC address map | Done | P3 (needs osc-mcp e2e) |
 | Agentic workflow | Done | P4 |
 | Webapp | Done, with Playwright E2E tests | P5 |

@@ -1,9 +1,10 @@
-"""Patch validation - 3 checks against catalog, installed plugins, and cable polarity."""
+"""Patch validation - 4 checks: catalog, installed plugins, cable polarity, module data."""
 
 from pathlib import Path
 
 from .config import settings
 from .patch_generator import load_catalog
+from .transit_data import validate_transit_data
 
 # ---------------------------------------------------------------------------
 # Validation issue type
@@ -253,6 +254,47 @@ def _check_cables(
 
 
 # ---------------------------------------------------------------------------
+# Check 4: Module data blobs
+# ---------------------------------------------------------------------------
+
+
+def _check_module_data(
+    modules: list[dict], catalog: dict[str, dict]
+) -> list[ValidationIssue]:
+    """Validate per-module ``data`` blobs.
+
+    Modules with a catalog ``data_schema`` (Stoermelder Transit family) are
+    checked structurally; anything else carrying a non-empty blob gets a
+    warning since the server cannot verify foreign plugin state.
+    """
+    issues: list[ValidationIssue] = []
+    for mod in modules:
+        data = mod.get("data")
+        if not data:
+            continue
+        plugin = mod.get("plugin", "")
+        model = mod.get("model", "")
+        mod_label = f"mod_{mod['id']} ({plugin}/{model})"
+        schema = (catalog.get(plugin, {}).get(model) or {}).get("data_schema") or {}
+        if schema and plugin == "Stoermelder-P1" and model in ("Transit", "TransitEx"):
+            for problem in validate_transit_data(data, int(schema.get("slots", 12))):
+                issues.append(
+                    ValidationIssue(
+                        problem["severity"], mod_label, f"data: {problem['message']}"
+                    )
+                )
+        else:
+            issues.append(
+                ValidationIssue(
+                    "warning",
+                    mod_label,
+                    "Module carries a data blob with no catalog data_schema - stored unverified.",
+                )
+            )
+    return issues
+
+
+# ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
 
@@ -261,7 +303,7 @@ async def validate_patch(
     modules_json: list[dict],
     cables_json: list[dict],
 ) -> dict:
-    """Run all 3 validation checks against a patch.
+    """Run all 4 validation checks against a patch.
 
     Args:
         modules_json: List of module dicts from the .vcv JSON.
@@ -293,6 +335,9 @@ async def validate_patch(
 
     # Check 3 - cable polarity
     all_issues.extend(_check_cables(modules_json, cables_json, catalog))
+
+    # Check 4 - module data blobs
+    all_issues.extend(_check_module_data(modules_json, catalog))
 
     report = [issue.to_dict() for issue in all_issues]
     valid = not any(issue.severity == "error" for issue in all_issues)
