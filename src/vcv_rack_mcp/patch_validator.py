@@ -258,9 +258,7 @@ def _check_cables(
 # ---------------------------------------------------------------------------
 
 
-def _check_module_data(
-    modules: list[dict], catalog: dict[str, dict]
-) -> list[ValidationIssue]:
+def _check_module_data(modules: list[dict], catalog: dict[str, dict]) -> list[ValidationIssue]:
     """Validate per-module ``data`` blobs.
 
     Modules with a catalog ``data_schema`` (Stoermelder Transit family) are
@@ -279,9 +277,7 @@ def _check_module_data(
         if schema and plugin == "Stoermelder-P1" and model in ("Transit", "TransitEx"):
             for problem in validate_transit_data(data, int(schema.get("slots", 12))):
                 issues.append(
-                    ValidationIssue(
-                        problem["severity"], mod_label, f"data: {problem['message']}"
-                    )
+                    ValidationIssue(problem["severity"], mod_label, f"data: {problem['message']}")
                 )
         else:
             issues.append(

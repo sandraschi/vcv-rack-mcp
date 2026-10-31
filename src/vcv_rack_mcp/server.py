@@ -59,7 +59,7 @@ def _slugify(name: str) -> str:
 # ============================================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": False})
 async def vcv_patch(
     operation: str,
     name: str | None = None,
@@ -116,6 +116,7 @@ async def vcv_patch(
         await depot.save_patch(patch_data)
         return {
             "success": True,
+            "message": f"patch '{name}' created",
             "operation": "create",
             "patch_id": pid,
             "path": str(settings.DEPOT_DIR / f"{slug}.vcv"),
@@ -143,6 +144,7 @@ async def vcv_patch(
         await depot.save_patch(existing)
         return {
             "success": True,
+            "message": f"patch '{patch_id}' edited to version {new_version}",
             "operation": "edit",
             "patch_id": patch_id,
             "new_version": new_version,
@@ -286,12 +288,17 @@ async def vcv_patch(
                     "error": f"presets spec is only supported for Stoermelder Transit/TransitEx, got {plugin}/{model}",
                 }
             if not isinstance(presets, list):
-                return {"success": False, "error": "presets must be a list of {label?, fade_time?, color?, values[]}."}
+                return {
+                    "success": False,
+                    "error": "presets must be a list of {label?, fade_time?, color?, values[]}.",
+                }
             try:
                 target["data"] = build_transit_data(presets, source_maps, num_slots)
             except ValueError as exc:
                 return {"success": False, "error": str(exc)}
-            notes.append(f"Wrote {len(presets)} Transit presets into {plugin}/{model} (mod_{module_id}).")
+            notes.append(
+                f"Wrote {len(presets)} Transit presets into {plugin}/{model} (mod_{module_id})."
+            )
         else:
             if not isinstance(data, dict):
                 return {"success": False, "error": "data must be a JSON object."}
@@ -305,8 +312,12 @@ async def vcv_patch(
                         "error": f"Transit data invalid: {hard[0]['message']}",
                         "issues": problems,
                     }
-                notes.extend(f"warning: {p['message']}" for p in problems if p["severity"] == "warning")
-                notes.append(f"Stored validated Transit data on {plugin}/{model} (mod_{module_id}).")
+                notes.extend(
+                    f"warning: {p['message']}" for p in problems if p["severity"] == "warning"
+                )
+                notes.append(
+                    f"Stored validated Transit data on {plugin}/{model} (mod_{module_id})."
+                )
             else:
                 notes.append(
                     f"No data_schema for {plugin}/{model} - stored unverified; validate flags it as a warning."
@@ -334,7 +345,7 @@ async def vcv_patch(
 # ============================================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": False})
 async def vcv_catalog(
     operation: str,
     query: str | None = None,
@@ -454,7 +465,7 @@ async def vcv_catalog(
 # ============================================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": True})
 async def vcv_live(
     operation: str,
     patch_id: str | None = None,
@@ -513,7 +524,7 @@ async def vcv_live(
 # ============================================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": False})
 async def vcv_agentic_workflow(
     brief: str,
     persona: str = "generative",
@@ -591,13 +602,16 @@ async def vcv_agentic_workflow(
 # ============================================================================
 
 
-@mcp.tool(app=True)
+@mcp.tool(app=True, annotations={"readOnlyHint": True})
 async def show_patch_card(patch_id: str) -> dict:
     """
     Show a rich in-chat card for a patch.
 
     ## Return Format
     ToolResult with PrefabApp content.
+
+    ## Examples
+    show_patch_card(patch_id="ambient-drone")
     """
     data = _patch_store.get(patch_id) or await depot.get_patch(patch_id)
     if not data:
@@ -625,7 +639,7 @@ async def show_patch_card(patch_id: str) -> dict:
     return {"success": True, "content": f"Patch: {data['name']}", "structured_content": app}
 
 
-@mcp.tool(app=True)
+@mcp.tool(app=True, annotations={"readOnlyHint": True})
 async def show_catalog_card(
     function_tag: str | None = None, persona_tag: str | None = None
 ) -> dict:
@@ -634,6 +648,10 @@ async def show_catalog_card(
 
     ## Return Format
     ToolResult with PrefabApp content.
+
+    ## Examples
+    show_catalog_card(function_tag="osc")
+    show_catalog_card(persona_tag="generative")
     """
     modules = search_catalog(function_tag=function_tag, persona_tag=persona_tag)
     with PrefabApp(title=f"Catalog ({len(modules)} modules)") as app:
@@ -656,10 +674,16 @@ async def show_catalog_card(
 # ============================================================================
 
 
-@mcp.tool()
+@mcp.tool(annotations={"readOnlyHint": True})
 async def hub_status() -> dict:
     """
     Show hub status: catalog size, depot health, Rack path.
+
+    ## Return Format
+    {"success": bool, "server": str, "version": str, "catalog_size": int, ...}
+
+    ## Examples
+    hub_status()
     """
     catalog = load_catalog()
     rack_ok = settings.RACK_EXE.exists()
@@ -667,6 +691,7 @@ async def hub_status() -> dict:
     patches = await depot.list_patches(limit=5)
     return {
         "success": True,
+        "message": "hub status ok",
         "server": "vcv-rack-mcp",
         "version": "0.1.0",
         "catalog_size": len(catalog),
@@ -675,6 +700,32 @@ async def hub_status() -> dict:
         "depot_ok": depot_ok,
         "recent_patches": len(patches),
     }
+
+
+@mcp.tool(annotations={"readOnlyHint": False, "destructiveHint": True})
+async def vcv_shutdown() -> dict:
+    """
+    Shut down the vcv-rack-mcp server process gracefully.
+
+    Responds immediately, then exits the process ~500 ms later so
+    in-flight responses flush (same contract as POST /api/shutdown).
+
+    ## Return Format
+    {"success": bool, "message": str}
+
+    ## Examples
+    vcv_shutdown()
+    """
+    import threading
+
+    threading.Timer(0.5, lambda: os._exit(0)).start()
+    return {"success": True, "message": "vcv-rack-mcp shutting down"}
+
+
+def _error_response(message: str, exc: BaseException) -> dict:
+    """Shared error shape with auto-logged traceback (TOOL_DESIGN_STANDARDS 7.1 Pattern 3)."""
+    logger.exception("%s: %s", message, exc)
+    return {"success": False, "error": f"{message}: {exc}"}
 
 
 # ============================================================================
@@ -810,8 +861,48 @@ def build_app():
     async def api_health(request: Request) -> JSONResponse:
         return JSONResponse({"status": "ok", "service": "vcv-rack-mcp"})
 
+    async def api_capabilities(request: Request) -> JSONResponse:
+        tools = sorted({t.name for t in await mcp.list_tools()})
+        return JSONResponse(
+            {
+                "success": True,
+                "server": "vcv-rack-mcp",
+                "version": "0.1.0",
+                "tools": tools,
+                "routes": [
+                    "/health",
+                    "/mcp",
+                    "/api/status",
+                    "/api/capabilities",
+                    "/api/catalog",
+                    "/api/patches",
+                    "/api/jobs",
+                    "/api/shutdown",
+                ],
+            }
+        )
+
+    async def api_shutdown(request: Request) -> JSONResponse:
+        import threading
+
+        threading.Timer(0.5, lambda: os._exit(0)).start()
+        return JSONResponse({"success": True, "message": "shutting down"})
+
     mcp_asgi = mcp.http_app(path="/", transport="http", stateless_http=True)
-    cors = Middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+    cors = Middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://127.0.0.1:10917",
+            "http://localhost:10917",
+            "http://goliath:10917",
+            "tauri://localhost",
+            "http://tauri.localhost",
+            "https://tauri.localhost",
+        ],
+        allow_origin_regex=r"https?://(127\.0\.0\.1|localhost|goliath|[a-z0-9-]+\.ts\.net)(:\d+)?",
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
     return Starlette(
         routes=[
             Route("/health", endpoint=api_health),
@@ -824,6 +915,8 @@ def build_app():
             Route("/api/patches/{id}/open", endpoint=api_patches_open, methods=["POST"]),
             Route("/api/jobs", endpoint=api_jobs_list),
             Route("/api/jobs", endpoint=api_jobs_create, methods=["POST"]),
+            Route("/api/capabilities", endpoint=api_capabilities),
+            Route("/api/shutdown", endpoint=api_shutdown, methods=["POST"]),
         ],
         middleware=[cors],
         lifespan=mcp_asgi.lifespan,

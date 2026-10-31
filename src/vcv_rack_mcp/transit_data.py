@@ -88,7 +88,9 @@ def validate_transit_data(data: Any, num_slots: int = TRANSIT_SLOTS) -> list[dic
             if not isinstance(entry, dict):
                 err(f"sourceMaps entry must be an object, got {entry!r}.")
                 break
-            if not isinstance(entry.get("moduleId"), int) or isinstance(entry.get("moduleId"), bool):
+            if not isinstance(entry.get("moduleId"), int) or isinstance(
+                entry.get("moduleId"), bool
+            ):
                 err(f"sourceMaps entry needs integer moduleId, got {entry!r}.")
                 break
             if not isinstance(entry.get("paramId"), int) or isinstance(entry.get("paramId"), bool):

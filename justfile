@@ -10,8 +10,20 @@ run:
 lint:
     uv run ruff check src/
 
+fmt:
+    uv run ruff format src/
+
 fix:
     uv run ruff check --fix src/
+
+# Fleet gates: lint + format-check + tests
+check:
+    uv run ruff check src/
+    uv run ruff format src/ --check
+    uv run pytest tests/ -q
+
+serve:
+    uv run -m vcv_rack_mcp --http --port 10916
 
 test:
     uv run pytest tests/ -v
