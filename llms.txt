@@ -1,0 +1,5 @@
+# vcv-rack-mcp
+
+MCP server for VCV Rack 2 - generative patch authorship from natural language.
+
+Full reference: [llms-full.txt](llms-full.txt)

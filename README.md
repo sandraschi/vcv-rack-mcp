@@ -22,6 +22,8 @@ uv run -m vcv_rack_mcp
 | `vcv_live` | OSC address map, performance sheet for live tweaking |
 | `vcv_agentic_workflow` | ctx.sample loop: brief → generate → validate → retry (max 3) |
 | `show_patch_card` / `show_catalog_card` | Prefab UI cards |
+| `hub_status` | Catalog size, depot health, Rack path |
+| `vcv_shutdown` | Graceful self-termination (+ `POST /api/shutdown`) |
 
 ## Architecture
 

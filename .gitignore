@@ -8,3 +8,9 @@ depot/*.sqlite
 depot/*.sqlite-wal
 depot/*.sqlite-shm
 *.bak
+*.bak.*
+*.mcpb
+reports/
+logs/
+native/target/
+native/gen/

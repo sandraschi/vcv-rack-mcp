@@ -1,0 +1,58 @@
+# vcv-rack-mcp - full reference
+
+MCP server for VCV Rack 2 built around one insight: `.vcv` patch files are plain JSON, so an LLM can compose modular synth patches by emitting structured data. No GUI automation, ever.
+
+## Ports
+
+- Backend: 10916 (FastMCP stdio + HTTP `/mcp`, Starlette REST)
+- Frontend: 10917 (Vite React dashboard: Depot, Catalog, Modules, Jobs)
+
+## MCP tools
+
+| Tool | Kind | What it does |
+|------|------|--------------|
+| `vcv_patch` | mutating portmanteau | create, edit, validate, list, get, open_in_rack, rack_cycle, import, set_module_data |
+| `vcv_catalog` | mutating portmanteau (sideload writes) | search, get_module, verify_installed, library_link, sideload, suggest_rack |
+| `vcv_live` | read-only portmanteau | address_map, performance_sheet |
+| `vcv_agentic_workflow` | mutating (sampling loop when host supports ctx.sample, else generate-validate-retry x3) | brief -> generate -> validate -> retry |
+| `show_patch_card` | read-only Prefab card | rich in-chat patch card |
+| `show_catalog_card` | read-only Prefab card | rich in-chat catalog card |
+| `hub_status` | read-only | catalog size, depot health, Rack path |
+| `vcv_shutdown` | destructive | graceful self-termination (~500 ms) |
+
+## REST endpoints
+
+- `GET /health` - liveness probe (consumed by start.ps1 backend wait)
+- `GET /api/status` - server status + catalog size + Rack presence
+- `GET /api/capabilities` - tool list + route list (standard shape)
+- `GET /api/catalog[?function_tag&persona_tag&query]` - module search
+- `GET /api/patches[?persona&limit]` / `POST /api/patches` / `GET /api/patches/{id}` / `POST /api/patches/{id}/open`
+- `GET /api/jobs` / `POST /api/jobs` - agentic runs
+- `POST /api/shutdown` - orderly exit (responds 200, exits ~500 ms later)
+- `Mount /mcp` - FastMCP HTTP (path="/" sub-app, no double prefix; lifespan wired)
+
+## Config (env, see .env.example)
+
+| Var | Default | Purpose |
+|-----|---------|---------|
+| RACK_EXE | C:\Program Files\VCV\Rack2Free\Rack.exe | Rack binary for open_in_rack |
+| RACK_USER_DIR | %LOCALAPPDATA%\Rack2Free | plugins/ scanned by verify_installed |
+| HOST / PORT | 127.0.0.1 / 10916 | HTTP bind |
+| OSC_MCP_BASE | http://127.0.0.1:10767 | downstream osc-mcp vcv_manager |
+
+## CORS
+
+Explicit origins (10917 on 127.0.0.1/localhost/goliath + tauri://localhost, http(s)://tauri.localhost) plus unconditional `allow_origin_regex` for localhost/127.0.0.1/goliath/*.ts.net. No wildcard.
+
+## Architecture
+
+```
+vcv-rack-mcp (port 10916, stdio / HTTP /mcp)
+  catalog/modules.yaml - 50 modules, 50/50 generative/performance
+  depot/ - .vcv patches + SQLite metadata + sidecar .md
+  -> osc-mcp (port 10767) - vcv_manager consumes address maps
+```
+
+## What's real vs what needs a human
+
+Manual gates P2 (Rack round-trip) and P3 (OSC e2e) need a human with Rack open. No GUI automation of the Rack window under any circumstances.

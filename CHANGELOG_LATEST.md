@@ -1,5 +1,27 @@
 # CHANGELOG_LATEST — vcv-rack-mcp
 
+## Unreleased — assfix 2026-10-31 (fleet compliance)
+
+### Fixed
+- **CORS wildcard removed** (CRITICAL): `allow_origins=["*"]` replaced with explicit 10917 origins (127.0.0.1/localhost/goliath + tauri://localhost, tauri.localhost) plus unconditional `allow_origin_regex` for LAN/Tailscale.
+- **Shutdown surface** (HIGH): new `vcv_shutdown` MCP tool (destructive annotation) + `POST /api/shutdown` route (200 now, exit ~500 ms later); shared `_error_response()` helper with `logger.exception` auto-logging.
+- **Capabilities endpoint** (HIGH): new `GET /api/capabilities` (tools + routes, standard shape) for webapp/IDE discovery.
+- **Tool docs** (HIGH): `hub_status` gained `## Return Format` + `## Examples`; both Prefab cards gained `## Examples`; create/edit responses now carry a `message` key (dialogic contract).
+- **Tool annotations** (MEDIUM): every tool carries `annotations=` (`readOnlyHint`, destructive on shutdown).
+- **Ruff T20 enforced** (MEDIUM): `T20` added to `select` with per-file-ignores for tests/scripts; `ruff format` clean.
+- **justfile fleet recipes** (MEDIUM): added `fmt`, `serve`, `check` (lint + format-check + tests).
+- **Missing roots** (MEDIUM/LOW): new `.env.example` (RACK_EXE/RACK_USER_DIR/HOST/PORT/OSC_MCP_BASE), `start.bat` shim, `llms.txt` + `llms-full.txt` (tools/endpoints/config/ports); `.gitignore` now covers `*.mcpb`, `reports/`, `*.bak.*`, `native/target|gen`.
+- **Gates verified**: `ruff check` clean, `ruff format --check` clean, `pytest` 24/24 pass, webapp `bun run build` (tsc -b + vite) clean, CSS 19.9 kB (Tailwind active).
+
+### Deferred (issues to mint)
+- Webapp catch-them-all rebuild (Dashboard/Inbox/Tools/Skills/Chat/Settings/Help/Logs) + Chat backend proxy + LLM glom-on + onboarding cue.
+- MCPB 3-4-100 prompts (system 193 words, user 87 words) + `examples.json` + `scripts/mcpb-pack.ps1` shim + `glama.json`.
+- Session injection channels (`.cursorrules`, `.claude-plugin`, copilot instructions) - needs fleet template decision.
+- `.pre-commit-config.yaml` + hook materialisation, CI `ci.yml` (ruff/biome/pyright/pytest), coverage `--cov` gate.
+- `CHANGELOG.md` (has CHANGELOG_LATEST.md only), `CLAUDE.md`, `.gitattributes`, `.windsurfrules`.
+- `.bak` dross cleanup (tracked `*.bak` from prior runs).
+- ghaudit never run on this repo.
+
 ## v0.2.0 — 2026-10-22 (Transit module data)
 
 ### Added
