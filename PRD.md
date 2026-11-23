@@ -1,7 +1,7 @@
 # PRD — vcv-rack-mcp
 
-**Version:** 0.1 (pre-implementation)
-**Date:** 2026-07-12
+**Version:** 0.2 (implemented & released v0.1.0; live C++ bridge scaffolded)
+**Date:** 2026-11-23 (initial 2026-07-12)
 **Author:** Sandra + Claude (Fable 5)
 **Executor:** DeepSeek V4 via OpenCode (or any fleet coding agent)
 **Fleet doc:** `D:\Dev\repos\mcp-central-docs\architecture\FLEET_GAP_ANALYSIS_2026-07.md` §12.2
@@ -118,6 +118,15 @@ SEP-1577 `ctx.sample` loop: brief → catalog selection → JSON generation → 
 | M5 | web_sota + mcpb pack + FLEET_INDEX entry + release | 1 d |
 
 **Total: ~4 days.** Render lane (Cardinal/Rack Pro) is a separate PRD amendment after Sandra's decision.
+
+---
+
+## 10. 2026-11-23 Implementation Update (v0.1.0 + Live Bridge)
+
+- **Released:** `v0.1.0` ([GitHub Release](https://github.com/sandraschi/vcv-rack-mcp/releases/tag/v0.1.0), `vcv-rack-mcp-v0.1.0.mcpb`).
+- **VCV Rack 2 auto-detection & lifecycle:** `config.py` + `rack_process.py` auto-detect `Rack2Free`/`Rack2Pro`/`Rack2` executables, `%LOCALAPPDATA%\Rack2`, and `plugins-win-x64`; `vcv_patch` (`create`, `edit`, `import`, `set_module_data`, `open_in_rack`) writes `<depot>/<slug>.vcv` to disk; `rack_status`, `rack_start`, and `rack_stop` manage `Rack.exe`.
+- **SOTA Webapp (`10917`):** 12 routed pages (`Dashboard`, `Patch Depot`, `Modules Catalog`, `VCV Library`, `Agentic Jobs`, `Tools Hub`, `Skills`, `AI Chat`, `Apps Hub`, `Logs`, `Settings`, `Help`), Zustand state, `Ctrl+L` log modal, and local LLM probing (`Ollama`/`LM Studio`/`vLLM`).
+- **Live Rack Bridge (`bridge-plugin/`):** C++ VCV Rack 2 `.vcvplugin` scaffold (`VCVBridge`) embedding a localhost HTTP server on port `11265` (registered in `operations/WEBAPP_PORTS.md`) with UI-thread command dispatch for `/health`, `/state`, `/module/add`, `/module/remove`, `/cable/add`, `/cable/remove`, and `/param/set` (pending MSYS2 MinGW64 compile).
 
 ## 10. Acceptance (v0.1 ship gate)
 

@@ -2,7 +2,7 @@
 
 MCP server for **VCV Rack 2** built around one insight: `.vcv` patch files are plain JSON, so an LLM can compose modular synth patches by emitting structured data — no GUI automation, ever.
 
-**Status: v0.1.0 — Webapp and Core complete.** Patch generation, catalog, validation, OSC bridge, webapp dashboard, Playwright E2E tests, and agentic workflow all working. Manual gates P2 (round-trip in Rack) and P3 (OSC e2e) still need a human with Rack open.
+**Status: v0.1.0 released (`vcv-rack-mcp-v0.1.0.mcpb`).** Patch generation, catalog, validation, OSC bridge, SOTA 12-page webapp, Playwright E2E tests, Rack 2 process lifecycle, and agentic workflow all working; `bridge-plugin/` C++ live HTTP bridge scaffolded (port `11265`). Manual gates P2 (round-trip in Rack) and P3 (OSC e2e) still need a human with Rack open.
 
 ## Quick Start
 

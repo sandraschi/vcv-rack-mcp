@@ -1,0 +1,21 @@
+{
+  "slug": "VCVBridge",
+  "name": "VCV Bridge",
+  "version": "2.0.0",
+  "license": "GPL-3.0-or-later",
+  "brand": "VCV-Rack-MCP",
+  "author": "Sandra Schipal",
+  "authorEmail": "sandraschi@gmail.com",
+  "pluginUrl": "https://github.com/sandraschi/vcv-rack-mcp",
+  "modules": [
+    {
+      "slug": "VCVBridge",
+      "name": "VCV Bridge",
+      "description": "Localhost HTTP/JSON-RPC bridge for live rack inspection, module spawning, cabling, and parameter control",
+      "tags": [
+        "Utility",
+        "External"
+      ]
+    }
+  ]
+}
