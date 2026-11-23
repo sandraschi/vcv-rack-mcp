@@ -1,5 +1,17 @@
 # CHANGELOG_LATEST — vcv-rack-mcp
 
+## Unreleased — 2026-11-23 (Webapp SOTA rebuild & VCV Rack 2 launch)
+
+### Fixed
+- **VCV Rack 2 auto-detection**: `config.py` now probes `Rack2Free`/`Rack2Pro`/`Rack2` executables, `%LOCALAPPDATA%\Rack2` (instead of hardcoded `Rack2Free`), and `plugins-win-x64` (instead of `plugins`).
+- **`.vcv` file materialization & double-JSON bug**: `vcv_patch` (`create`, `edit`, `import`, `set_module_data`) and `POST /api/patches` now write `<depot>/<slug>.vcv` to disk and pass parsed `list`/`dict` objects to `db.py` (fixing `open_in_rack` 404s).
+- **Rack lifecycle control**: added `rack_process.py` (`get_rack_status`, `launch_rack`, `stop_rack`), `vcv_patch` operations `rack_status`/`rack_start`/`rack_stop`, and REST routes `GET /api/rack/status`, `POST /api/rack/start`, `POST /api/rack/stop`, `POST /api/rack/config`.
+
+### Added
+- **Full SOTA Webapp (`webapp/src/`)**: replaced monolithic `App.tsx` with `Layout.tsx` (retractable sidebar with top toggle, topbar with Start/Stop Rack, `Ctrl+L` logs modal, theme toggle, footer), Zustand store (`store/app.ts`), and 12 routed pages: Dashboard, Patch Depot (+ Detail), Modules Catalog, VCV Library, Agentic Jobs, Tools Hub, Skills, AI Chat, Apps Hub, Logs, Settings, and Help (5-tab contract).
+- **Backend SOTA endpoints**: `GET /api/health`, `/api/dashboard`, `/api/tools`, `/api/tools/{name}`, `POST /api/tools/{name}/run`, `GET /api/skills`, `/api/skills/{name}`, `/skill/{name}`, `GET /api/logs` (ring-buffer + `tool_call` logging), `GET /api/llm/providers`, `/api/llm/models`, `/api/llm/gpus`, `POST /api/llm/chat`, `GET /api/apps`.
+- **MCP Skill resource**: added `skills/vcv-rack-mcp/SKILL.md` and `@mcp.resource("skill://vcv-rack-mcp/SKILL.md")`.
+
 ## Unreleased — assfix 2026-10-31 (fleet compliance)
 
 ### Fixed

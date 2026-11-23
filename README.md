@@ -17,7 +17,7 @@ uv run -m vcv_rack_mcp
 
 | Tool | What it does |
 |------|-------------|
-| `vcv_patch` | Create, edit, validate, list, get, open_in_rack, rack_cycle, import patches, set_module_data |
+| `vcv_patch` | Create, edit, validate, list, get, open_in_rack, rack_status/rack_start/rack_stop/rack_cycle, import patches, set_module_data |
 | `vcv_catalog` | Search catalog, get module details, verify installed, library link, sideload, suggest rack |
 | `vcv_live` | OSC address map, performance sheet for live tweaking |
 | `vcv_agentic_workflow` | ctx.sample loop: brief → generate → validate → retry (max 3) |
@@ -48,6 +48,10 @@ vcv-rack-mcp (port 10916, stdio / HTTP /mcp)
 
 ## Ports
 
-- Backend: 10916 (FastMCP + FastAPI)
+- Backend: 10916 (FastMCP + Starlette)
 - Frontend: 10917 (Vite React, active)
 - OSC control: delegates to osc-mcp port 10767
+
+## Webapp
+
+The React + Tailwind console on port `10917` includes: Dashboard (KPIs + VCV Rack 2 start/stop), Patch Depot (search/filter/sort/paginate + Compose + Detail), Modules Catalog, VCV Library (installed plugin scan + GitHub sideload), Agentic Jobs, Tools Hub (live schema + runner), Skills (`SKILL.md`), AI Chat (local Ollama/LM Studio/vLLM), Apps Hub, Logs (`Ctrl+L` + `/logs`), Settings (Rack paths + LLM provider/model), and Help (Overview, VCV Rack 2, API & Ports, Troubleshoot, FAQ).
