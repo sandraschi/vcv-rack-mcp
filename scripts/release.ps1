@@ -230,7 +230,7 @@ if (-not $SkipMcpb) {
             'Check manifest.json is valid. Run: bunx @anthropic-ai/mcpb validate manifest.json'
         Pop-Location
 
-        bunx @anthropic-ai/mcpb validate $mcpbOut
+        bunx @anthropic-ai/mcpb validate (Join-Path $mcpbSrc 'manifest.json')
         Assert-Exit $LASTEXITCODE 'mcpb validate' `
             'The generated .mcpb bundle failed validation.' `
             'Inspect the bundle: bunx @anthropic-ai/mcpb inspect dist\*.mcpb'
