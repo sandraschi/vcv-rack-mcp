@@ -9,6 +9,15 @@
   }
 }
 
+/* Light-mode invert guardrail (WEBAPP_PAGES.md section 6) */
+html.light-invert {
+  filter: invert(1) hue-rotate(180deg);
+}
+html.light-invert img,
+html.light-invert video {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 /* Glassmorphism custom helpers */
 .glass {
   background: rgba(15, 23, 42, 0.65);
