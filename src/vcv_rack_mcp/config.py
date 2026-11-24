@@ -98,6 +98,9 @@ class Settings:
     OSC_MCP_BASE: str = field(
         default_factory=lambda: os.environ.get("OSC_MCP_BASE", "http://127.0.0.1:10767")
     )
+    BRIDGE_URL: str = field(
+        default_factory=lambda: os.environ.get("VCV_BRIDGE_URL", "http://127.0.0.1:11265")
+    )
     VLLM_PORT: int = field(default_factory=lambda: int(os.environ.get("VLLM_PORT", "8000")))
 
     def __post_init__(self):
