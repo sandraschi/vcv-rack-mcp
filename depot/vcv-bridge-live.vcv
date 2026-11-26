@@ -1,0 +1,17 @@
+{
+  "version": "2.6.6",
+  "unsaved": false,
+  "zoom": 1.0,
+  "gridOffset": [0.0, 0.0],
+  "modules": [
+    {
+      "id": 1,
+      "plugin": "VCVBridge",
+      "version": "2.0.0",
+      "model": "VCVBridge",
+      "params": [],
+      "pos": [0, 0]
+    }
+  ],
+  "cables": []
+}

@@ -21,6 +21,15 @@ from prefab_ui.components import Badge, Heading, Row
 from rich.console import Console
 
 from . import db as depot
+from .bridge_client import (
+    bridge_add_cable,
+    bridge_add_module,
+    bridge_health,
+    bridge_remove_cable,
+    bridge_remove_module,
+    bridge_set_param,
+    bridge_state,
+)
 from .catalog_loader import get_module, load_catalog, search_catalog
 from .config import settings
 from .llm_service import chat_completion, get_gpus, list_models, probe_providers
@@ -525,21 +534,78 @@ async def vcv_catalog(
 # ============================================================================
 
 
-@mcp.tool(annotations={"readOnlyHint": True})
+@mcp.tool(annotations={"readOnlyHint": False})
 async def vcv_live(
     operation: str,
     patch_id: str | None = None,
+    plugin: str | None = None,
+    model: str | None = None,
+    module_id: int | None = None,
+    param_id: int | None = None,
+    value: float | None = None,
+    output_module_id: int | None = None,
+    output_id: int | None = None,
+    input_module_id: int | None = None,
+    input_id: int | None = None,
+    cable_id: int | None = None,
+    x: float = 0.0,
+    y: float = 0.0,
 ) -> dict:
     """
-    Live performance portmanteau - address_map, performance_sheet.
+    Live performance & VCVBridge portmanteau - address_map, performance_sheet, bridge_health, bridge_state, bridge_add_module, bridge_remove_module, bridge_add_cable, bridge_remove_cable, bridge_set_param.
 
     ## Return Format
     {"success": bool, "operation": str, ...}
 
     ## Examples
     vcv_live(operation="address_map", patch_id="ambient-drone")
-    vcv_live(operation="performance_sheet", patch_id="ambient-drone")
+    vcv_live(operation="bridge_state")
+    vcv_live(operation="bridge_add_module", plugin="Fundamental", model="VCO")
+    vcv_live(operation="bridge_set_param", module_id=12, param_id=0, value=0.5)
     """
+    if operation == "bridge_health":
+        res = await bridge_health()
+        return {"operation": "bridge_health", **res}
+
+    if operation == "bridge_state":
+        res = await bridge_state()
+        return {"operation": "bridge_state", **res}
+
+    if operation == "bridge_add_module":
+        if not plugin or not model:
+            return {"success": False, "error": "plugin and model are required"}
+        res = await bridge_add_module(plugin, model, x=x, y=y)
+        _log_tool_call("vcv_live:bridge_add_module", res.get("success", False), f"{plugin}/{model}")
+        return {"operation": "bridge_add_module", **res}
+
+    if operation == "bridge_remove_module":
+        if module_id is None:
+            return {"success": False, "error": "module_id is required"}
+        res = await bridge_remove_module(module_id)
+        return {"operation": "bridge_remove_module", **res}
+
+    if operation == "bridge_add_cable":
+        if None in (output_module_id, output_id, input_module_id, input_id):
+            return {
+                "success": False,
+                "error": "output_module_id, output_id, input_module_id, input_id are required",
+            }
+        res = await bridge_add_cable(
+            output_module_id, output_id, input_module_id, input_id  # type: ignore[arg-type]
+        )
+        return {"operation": "bridge_add_cable", **res}
+
+    if operation == "bridge_remove_cable":
+        if cable_id is None:
+            return {"success": False, "error": "cable_id is required"}
+        res = await bridge_remove_cable(cable_id)
+        return {"operation": "bridge_remove_cable", **res}
+
+    if operation == "bridge_set_param":
+        if module_id is None or param_id is None or value is None:
+            return {"success": False, "error": "module_id, param_id, and value are required"}
+        res = await bridge_set_param(module_id, param_id, value)
+        return {"operation": "bridge_set_param", **res}
     if operation == "address_map":
         if not patch_id:
             return {"success": False, "error": "patch_id required"}
@@ -1178,6 +1244,50 @@ def build_app():
                 pass
         return JSONResponse({"success": True, "apps": apps})
 
+    async def api_bridge_health(request: Request) -> JSONResponse:
+        return JSONResponse(await bridge_health())
+
+    async def api_bridge_state(request: Request) -> JSONResponse:
+        return JSONResponse(await bridge_state())
+
+    async def api_bridge_add_module(request: Request) -> JSONResponse:
+        b = await request.json()
+        return JSONResponse(
+            await bridge_add_module(
+                b.get("plugin", ""),
+                b.get("model", ""),
+                float(b.get("x", 0.0)),
+                float(b.get("y", 0.0)),
+            )
+        )
+
+    async def api_bridge_remove_module(request: Request) -> JSONResponse:
+        b = await request.json()
+        return JSONResponse(await bridge_remove_module(int(b["module_id"])))
+
+    async def api_bridge_add_cable(request: Request) -> JSONResponse:
+        b = await request.json()
+        return JSONResponse(
+            await bridge_add_cable(
+                int(b["output_module_id"]),
+                int(b["output_id"]),
+                int(b["input_module_id"]),
+                int(b["input_id"]),
+            )
+        )
+
+    async def api_bridge_remove_cable(request: Request) -> JSONResponse:
+        b = await request.json()
+        return JSONResponse(await bridge_remove_cable(int(b["cable_id"])))
+
+    async def api_bridge_set_param(request: Request) -> JSONResponse:
+        b = await request.json()
+        return JSONResponse(
+            await bridge_set_param(
+                int(b["module_id"]), int(b["param_id"]), float(b["value"])
+            )
+        )
+
     async def api_capabilities(request: Request) -> JSONResponse:
         tools = sorted({t.name for t in await mcp.list_tools()})
         return JSONResponse(
@@ -1265,6 +1375,13 @@ def build_app():
             Route("/api/llm/gpus", endpoint=api_llm_gpus),
             Route("/api/llm/chat", endpoint=api_llm_chat, methods=["POST"]),
             Route("/api/apps", endpoint=api_apps),
+            Route("/api/bridge/health", endpoint=api_bridge_health),
+            Route("/api/bridge/state", endpoint=api_bridge_state),
+            Route("/api/bridge/module/add", endpoint=api_bridge_add_module, methods=["POST"]),
+            Route("/api/bridge/module/remove", endpoint=api_bridge_remove_module, methods=["POST"]),
+            Route("/api/bridge/cable/add", endpoint=api_bridge_add_cable, methods=["POST"]),
+            Route("/api/bridge/cable/remove", endpoint=api_bridge_remove_cable, methods=["POST"]),
+            Route("/api/bridge/param/set", endpoint=api_bridge_set_param, methods=["POST"]),
             Route("/api/capabilities", endpoint=api_capabilities),
             Route("/api/shutdown", endpoint=api_shutdown, methods=["POST"]),
         ],

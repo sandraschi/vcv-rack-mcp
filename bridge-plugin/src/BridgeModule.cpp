@@ -19,9 +19,12 @@ struct PendingCmd {
 };
 
 std::mutex g_cmdMutex;
+std::mutex g_headlessMutex;
 std::queue<std::shared_ptr<PendingCmd>> g_cmdQueue;
 std::atomic<int> g_instanceCount{0};
 std::atomic<bool> g_serverRunning{false};
+std::atomic<bool> g_headlessMode{false};
+std::atomic<Context*> g_rackContext{nullptr};
 std::unique_ptr<httplib::Server> g_server;
 std::thread g_serverThread;
 int g_port = 11265;
@@ -46,6 +49,19 @@ std::string dumpAndFree(json_t* root) {
 }
 
 std::string dispatchToUi(std::function<std::string()> fn) {
+    if (g_headlessMode.load()) {
+        Context* ctx = g_rackContext.load();
+        if (!ctx) return jsonError("Rack context unavailable");
+        std::lock_guard<std::mutex> lock(g_headlessMutex);
+        contextSet(ctx);
+        try {
+            return fn();
+        } catch (const std::exception& e) {
+            return jsonError(e.what());
+        } catch (...) {
+            return jsonError("Unknown error in headless Rack command");
+        }
+    }
     auto cmd = std::make_shared<PendingCmd>();
     cmd->fn = std::move(fn);
     auto fut = cmd->promise.get_future();
@@ -66,13 +82,21 @@ void startBridgeServer() {
         if (p > 0 && p < 65536) g_port = p;
     }
 
-    g_server = std::make_unique<httplib::Server>();
+    g_server.reset(new httplib::Server());
 
     g_server->Get("/health", [](const httplib::Request&, httplib::Response& res) {
         json_t* root = json_object();
         json_object_set_new(root, "status", json_string("ok"));
         json_object_set_new(root, "service", json_string("vcv-bridge"));
         json_object_set_new(root, "port", json_integer(g_port));
+        json_object_set_new(root, "widget_in_patch", json_boolean(g_instanceCount.load() > 0));
+        json_object_set_new(root, "headless", json_boolean(g_headlessMode.load()));
+        Context* ctx = g_rackContext.load();
+        bool rackReady = (ctx && ctx->scene && ctx->scene->rack);
+        json_object_set_new(root, "rack_ready", json_boolean(rackReady));
+        if (rackReady) {
+            json_object_set_new(root, "modules_count", json_integer((json_int_t)ctx->scene->rack->getModules().size()));
+        }
         res.set_content(dumpAndFree(root), "application/json");
     });
 
@@ -166,6 +190,7 @@ void startBridgeServer() {
                 return jsonError("Model not found: " + pStr + "/" + mStr);
             }
             Module* m = model->createModule();
+            APP->engine->addModule(m);
             ModuleWidget* mw = model->createModuleWidget(m);
             APP->scene->rack->addModule(mw);
             APP->scene->rack->setModulePosNearest(mw, math::Vec((float)px, (float)py));
@@ -228,8 +253,8 @@ void startBridgeServer() {
 
             CableWidget* cw = new CableWidget();
             cw->color = APP->scene->rack->getNextCableColor();
-            cw->setOutput(outPort);
-            cw->setInput(inPort);
+            cw->outputPort = outPort;
+            cw->inputPort = inPort;
             cw->updateCable();
             if (!cw->isComplete()) {
                 delete cw;
@@ -311,6 +336,14 @@ void stopBridgeServer() {
 
 } // namespace
 
+void bridgeStartServer() {
+    startBridgeServer();
+}
+
+void bridgeStopServer() {
+    stopBridgeServer();
+}
+
 struct VCVBridgeModule : Module {
     enum ParamId { PARAMS_LEN };
     enum InputId { INPUTS_LEN };
@@ -319,15 +352,16 @@ struct VCVBridgeModule : Module {
 
     VCVBridgeModule() {
         config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
-        if (g_instanceCount.fetch_add(1) == 0) {
-            startBridgeServer();
+        if (contextGet()) {
+            g_rackContext.store(contextGet());
         }
+        g_headlessMode.store(settings::headless);
+        g_instanceCount.fetch_add(1);
+        startBridgeServer();
     }
 
     ~VCVBridgeModule() override {
-        if (g_instanceCount.fetch_sub(1) == 1) {
-            stopBridgeServer();
-        }
+        g_instanceCount.fetch_sub(1);
     }
 
     void process(const ProcessArgs& args) override {
@@ -338,6 +372,10 @@ struct VCVBridgeModule : Module {
 struct VCVBridgeWidget : ModuleWidget {
     VCVBridgeWidget(VCVBridgeModule* module) {
         setModule(module);
+        if (module && contextGet()) {
+            g_rackContext.store(contextGet());
+            g_headlessMode.store(contextGet()->window == nullptr);
+        }
         setPanel(createPanel(asset::plugin(pluginInstance, "res/VCVBridge.svg")));
         addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, 0)));
         addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, 0)));
